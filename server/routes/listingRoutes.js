@@ -11,13 +11,8 @@ import { upload } from "../middleware/upload.js";
 const router = express.Router();
 
 // Create listing
-router.post(
-  "/",
-  protect,
-  upload.array("images", 5),
-  createListing
-);
-// router.post("/", protect, upload.array("images", 5), createListing); // TEMP
+router.post("/", protect, upload.array("images", 5), createListing);
+// router.post("/", protect, createListing); // TEMP
 
 // Get all listings
 router.get("/", getListings);
