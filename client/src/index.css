@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F0EDE5;
+  --surface: #FFFFFF;
+  --text: #1A1A1A;
+  --text-muted: #6B7280;
+  --primary: #004643;
+  --accent: #F95C4B;
+  --border: #E0E0E0;
+}
+
+/* Dark mode */
+.dark {
+  --bg: #111808;
+  --surface: #171616; /* change */
+  --text: #FFF0BA;
+  --text-muted: #9CA3AF;
+  --primary: #004643;
+  --accent: #F95C4B;
+  --border: #2A2A2A;
+}
