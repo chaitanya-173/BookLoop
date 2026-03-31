@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light mode */
 :root {
   --bg: #F0EDE5;
   --surface: #FFFFFF;

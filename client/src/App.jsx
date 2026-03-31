@@ -13,6 +13,7 @@ import Sell from "./pages/Sell";
 import Categories from "./pages/Categories";
 import EditProfile from "./pages/EditProfile";
 import Favourites from "./pages/Favourites";
+import ListingDetails from "./pages/ListingDetails";
 
 export default function App() {
   return (
@@ -33,6 +34,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <MyBooks />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/listing/:id"
+          element={
+            <ProtectedRoute>
+              <ListingDetails />
             </ProtectedRoute>
           }
         />

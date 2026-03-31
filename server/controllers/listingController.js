@@ -36,7 +36,7 @@ export const getListings = async (req, res) => {
   try {
     const listings = await ListingModel.find()
       .sort({ createdAt: -1 })
-      .populate("user", "username email");
+      .populate("user", "name");
 
     return successResponse(res, "Listings fetched", listings);
   } catch (error) {
@@ -49,7 +49,7 @@ export const getListingById = async (req, res) => {
   try {
     const listing = await ListingModel.findById(req.params.id).populate(
       "user",
-      "username email",
+      "name email",
     );
 
     if (!listing) {
