@@ -1,14 +1,16 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
 import CategoryDropdown from "../components/CategoryDropdown";
 import { createListing } from "../services/listingService";
+import { useListings } from "../context/ListingsContext";
 import { toast } from "react-hot-toast";
 
 export default function Sell() {
   const [type, setType] = useState("sell");
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
+  const { refreshListings } = useListings();
 
   const [bookData, setBookData] = useState({
     title: "",
@@ -27,7 +29,6 @@ export default function Sell() {
     setImages(total);
   };
 
-  // ✅ HANDLE CHANGE
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -37,7 +38,7 @@ export default function Sell() {
     });
   };
 
-  // SUBMIT LOGIC (UNCHANGED)
+  // SUBMIT LOGIC
   const handleSubmit = async () => {
     const { title, category, price, condition, author, description } = bookData;
     console.log(bookData, images);
@@ -69,9 +70,10 @@ export default function Sell() {
     const res = await createListing(formData);
 
     if (res.data?.success) {
-      const listingId = res.data.data._id; // 👈 important
+      const listingId = res.data.data._id;
+      await refreshListings(); // refresh global listings
       toast.success(res.data.message || "Listing created");
-      navigate(`/listing/${listingId}`); // 🚀 redirect
+      navigate(`/listing/${listingId}`);
     } else {
       toast.error(res.data?.message || "Failed to create listing");
     }

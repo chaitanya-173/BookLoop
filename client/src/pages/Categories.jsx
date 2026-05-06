@@ -1,35 +1,122 @@
 import AppLayout from "../layouts/AppLayout";
+import {
+  GraduationCap,
+  BookOpen,
+  Trophy,
+  Library,
+  Laptop,
+  ChevronRight,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
-  "Fiction",
-  "Non-fiction",
-  "Academic",
-  "Competitive Exams",
-  "Free Books",
-  "Comics",
+  {
+    name: "School",
+    icon: GraduationCap,
+    desc: "Class 1–12, board prep & school essentials",
+  },
+  {
+    name: "College / University",
+    icon: Library,
+    desc: "Degree, diploma & higher education books",
+  },
+  {
+    name: "Entrance / Competitive",
+    icon: Trophy,
+    desc: "JEE, NEET, UPSC, SSC & exam prep",
+  },
+  {
+    name: "Fiction",
+    icon: BookOpen,
+    desc: "Novels, fantasy, thrillers & literature",
+  },
+  {
+    name: "Non-fiction",
+    icon: BookOpen,
+    desc: "Self-help, business, biographies & more",
+  },
+  {
+    name: "Others",
+    icon: Laptop,
+    desc: "Computer science, design, niche subjects",
+  },
 ];
 
 export default function Categories() {
+  const navigate = useNavigate();
+
   return (
     <AppLayout>
-      <h1 className="text-2xl font-semibold mb-6">Categories</h1>
+      <div className="space-y-8">
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {categories.map((cat) => (
-          <div
-            key={cat}
-            className="p-6 rounded-xl bg-[var(--surface)] border border-[var(--border)] hover:shadow-md transition cursor-pointer"
-          >
-            <h2 className="text-lg font-medium">{cat}</h2>
-          </div>
-        ))}
-      </div>
+        {/* HEADER */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold">Browse Categories</h1>
 
-      <div className="text-9xl">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis dolorem
-        cupiditate consequatur praesentium repellendus eligendi illum dolore
-        molestiae, magni distinctio maxime autem sunt corporis, minima, voluptas
-        consectetur voluptates doloribus! Labore!
+          <p className="text-sm text-[var(--text-muted)]">
+            Explore books across academic, fiction, competitive and specialized categories.
+          </p>
+        </div>
+
+        {/* CATEGORY GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+
+            return (
+              <div
+                key={cat.name}
+                onClick={() =>
+                  navigate(`/categories/${encodeURIComponent(cat.name)}`)
+                }
+                className="group p-6 rounded-2xl bg-[var(--surface)] 
+                border border-[var(--border)]
+                shadow-[0_4px_20px_rgba(0,0,0,0.08)]
+                hover:shadow-lg hover:scale-[1.02]
+                transition-all duration-300 cursor-pointer"
+              >
+                {/* ICON */}
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center
+                  bg-[var(--bg)] border border-[var(--border)] mb-4
+                  group-hover:border-[var(--accent)] transition"
+                >
+                  <Icon size={22} className="text-[var(--accent)]" />
+                </div>
+
+                {/* TITLE */}
+                <h2 className="text-lg font-semibold mb-2">
+                  {cat.name}
+                </h2>
+
+                {/* DESCRIPTION */}
+                <p className="text-sm text-[var(--text-muted)] mb-4 leading-relaxed">
+                  {cat.desc}
+                </p>
+
+                {/* CTA */}
+                <div className="flex items-center gap-1 text-sm font-medium text-[var(--accent)]">
+                  Explore <ChevronRight size={16} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* FUTURE NOTE */}
+        <div
+          className="rounded-2xl p-6 bg-[var(--surface)] border border-[var(--border)] 
+          shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+        >
+          <h3 className="text-lg font-semibold mb-2">
+            More categories coming soon 🚀
+          </h3>
+
+          <p className="text-sm text-[var(--text-muted)]">
+            We’re expanding BookLoop to include more specialized categories,
+            advanced filters, and location-based sorting for smarter book discovery.
+          </p>
+        </div>
       </div>
     </AppLayout>
   );

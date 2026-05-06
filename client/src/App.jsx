@@ -14,6 +14,7 @@ import Categories from "./pages/Categories";
 import EditProfile from "./pages/EditProfile";
 import Favourites from "./pages/Favourites";
 import ListingDetails from "./pages/ListingDetails";
+import CategoryBooks from "./pages/CategoryBooks";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
 
         <Route path="/categories" element={<Categories />} />
+        <Route path="/categories/:categoryName" element={<CategoryBooks />} />
 
         {/* Protected Routes */}
         <Route

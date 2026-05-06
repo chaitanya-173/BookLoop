@@ -1,22 +1,23 @@
 import AppLayout from "../layouts/AppLayout";
-import { useEffect, useState } from "react";
-import { getListings } from "../services/listingService";
+import { useListings } from "../context/ListingsContext";
 import BookCard from "../components/BookCard";
+import { useAuth } from "../context/AuthContext";
 
 export default function MyBooks() {
-  const [books, setBooks] = useState([]);
+  const { listings, loading } = useListings();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const fetch = async () => {
-      const res = await getListings();
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="p-5">Loading books...</div>
+      </AppLayout>
+    );
+  }
 
-      if (res.data?.success) {
-        setBooks(res.data.data);
-      }
-    };
-
-    fetch();
-  }, []);
+  const myBooks = listings.filter(
+    (book) => book.user?._id === (user?._id || user?.id),
+  );
 
   return (
     <AppLayout>
@@ -24,7 +25,7 @@ export default function MyBooks() {
         <h2 className="text-lg font-semibold mb-4">My Books</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {books.map((book) => (
+          {myBooks.map((book) => (
             <BookCard key={book._id} book={book} />
           ))}
         </div>
