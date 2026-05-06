@@ -22,10 +22,19 @@ export default function CategoryBooks() {
     .trim()
     .toLowerCase();
 
-  const filteredBooks = listings.filter((book) => {
-    const parentCategory = book.category?.split("•")[0].trim().toLowerCase();
-    return parentCategory === normalizedCategory;
-  });
+  let filteredBooks = [];
+
+  if (normalizedCategory === "free-books") {
+    filteredBooks = listings.filter(
+      (book) => book.type?.toLowerCase() === "donate",
+    );
+  } else {
+    filteredBooks = listings.filter((book) => {
+      const parentCategory = book.category?.split("•")[0].trim().toLowerCase();
+
+      return parentCategory === normalizedCategory;
+    });
+  }
 
   return (
     <AppLayout>

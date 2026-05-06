@@ -1,16 +1,242 @@
 import AppLayout from "../layouts/AppLayout";
+import { useListings } from "../context/ListingsContext";
+import { useNavigate } from "react-router-dom";
+import BookCard from "../components/BookCard";
+import {
+  ArrowRight,
+  GraduationCap,
+  BookOpen,
+  Trophy,
+  Library,
+  Laptop,
+  Gift,
+} from "lucide-react";
+import { toast } from "react-hot-toast";
+
+const trendingCategories = [
+  {
+    name: "School",
+    icon: GraduationCap,
+  },
+  {
+    name: "College / University",
+    icon: Library,
+  },
+  {
+    name: "Entrance / Competitive",
+    icon: Trophy,
+  },
+  {
+    name: "Fiction",
+    icon: BookOpen,
+  },
+  {
+    name: "Non-fiction",
+    icon: BookOpen,
+  },
+  {
+    name: "Others",
+    icon: Laptop,
+  },
+];
 
 export default function Home() {
+  const { listings, loading } = useListings();
+  const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="p-5">Loading books...</div>
+      </AppLayout>
+    );
+  }
+
+  // Nearby books (latest for now)
+  const nearbyBooks = listings.slice(0, 4);
+
+  // Free books
+  const freeBooks = listings.filter(
+    (book) => book.type?.toLowerCase() === "donate"
+  );
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "BookLoop",
+          text: "Join BookLoop and make books affordable for everyone!",
+          url: window.location.origin,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success("BookLoop link copied!");
+      }
+    } catch {
+      toast.error("Failed to share");
+    }
+  };
+
   return (
     <AppLayout>
-      <h1 className="text-2xl font-bold">BookLoop Home</h1>
-      <p>Explore books here...</p>
+      <div className="space-y-12">
 
-      <div className="text-9xl">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis dolorem
-        cupiditate consequatur praesentium repellendus eligendi illum dolore
-        molestiae, magni distinctio maxime autem sunt corporis, minima, voluptas
-        consectetur voluptates doloribus! Labore!
+        {/* HERO */}
+        <section
+          className="rounded-3xl p-8 bg-[var(--surface)] border border-[var(--border)]
+          shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+        >
+          <div className="max-w-3xl space-y-4">
+            <h1 className="text-4xl font-bold leading-tight">
+              Discover affordable books near you 
+            </h1>
+
+            <p className="text-[var(--text-muted)] text-base leading-relaxed">
+              Buy, sell, or donate books effortlessly with BookLoop —
+              making education accessible one book at a time.
+            </p>
+
+            <div className="flex gap-4 pt-2">
+              <button
+                onClick={() => navigate("/categories")}
+                className="px-5 py-3 rounded-xl bg-[var(--accent)] text-white font-medium hover:opacity-90 transition"
+              >
+                Explore Categories
+              </button>
+
+              <button
+                onClick={() => navigate("/sell")}
+                className="px-5 py-3 rounded-xl border border-[var(--border)] hover:bg-[var(--bg)] transition"
+              >
+                Sell a Book
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* NEARBY BOOKS */}
+        <section className="space-y-5">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Your Nearby Books</h2>
+
+            <button
+              onClick={() => navigate("/categories")}
+              className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
+            >
+              View More <ArrowRight size={18} />
+            </button>
+          </div>
+
+          {nearbyBooks.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {nearbyBooks.map((book) => (
+                <BookCard key={book._id} book={book} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-[var(--text-muted)]">
+              No nearby books available yet.
+            </p>
+          )}
+        </section>
+
+        {/* TRENDING CATEGORIES */}
+        <section className="space-y-5">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Trending Categories</h2>
+
+            <button
+              onClick={() => navigate("/categories")}
+              className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
+            >
+              View All <ArrowRight size={18} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {trendingCategories.map((cat) => {
+              const Icon = cat.icon;
+
+              return (
+                <div
+                  key={cat.name}
+                  onClick={() =>
+                    navigate(`/categories/${encodeURIComponent(cat.name)}`)
+                  }
+                  className="group rounded-2xl p-5 bg-[var(--surface)]
+                  border border-[var(--border)]
+                  shadow-[0_4px_20px_rgba(0,0,0,0.08)]
+                  hover:scale-[1.03] hover:shadow-lg
+                  transition-all duration-300 cursor-pointer text-center"
+                >
+                  <div
+                    className="w-12 h-12 mx-auto rounded-xl flex items-center justify-center
+                    bg-[var(--bg)] border border-[var(--border)] mb-3
+                    group-hover:border-[var(--accent)]"
+                  >
+                    <Icon size={22} className="text-[var(--accent)]" />
+                  </div>
+
+                  <h3 className="text-sm font-medium">
+                    {cat.name}
+                  </h3>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* FREE BOOKS */}
+        <section
+          onClick={() => navigate("/categories/free-books")}
+          className="rounded-3xl p-8 cursor-pointer
+          bg-gradient-to-r from-purple-600 to-indigo-600
+          text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]
+          hover:scale-[1.01] transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Gift size={28} />
+                <h2 className="text-3xl font-bold">
+                  Get Free Books
+                </h2>
+              </div>
+
+              <p className="text-sm text-white/90 max-w-xl">
+                Discover donated books from nearby students and readers —
+                completely free and accessible.
+              </p>
+            </div>
+
+            <ArrowRight size={30} />
+          </div>
+        </section>
+
+        {/* MISSION SECTION */}
+        <section
+          className="rounded-3xl p-8 bg-[var(--surface)] border border-[var(--border)]
+          shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+        >
+          <div className="space-y-5 max-w-3xl">
+            <h2 className="text-3xl font-bold">
+              Join the mission to make books affordable 📖
+            </h2>
+
+            <p className="text-[var(--text-muted)] leading-relaxed">
+              Millions of books remain unused while students struggle to afford them.
+              BookLoop connects readers, learners, and sellers to create an
+              accessible ecosystem for knowledge sharing.
+            </p>
+
+            <button
+              onClick={handleShare}
+              className="px-6 py-3 rounded-xl bg-[var(--accent)] text-white font-medium hover:opacity-90 transition"
+            >
+              Share BookLoop
+            </button>
+          </div>
+        </section>
       </div>
     </AppLayout>
   );

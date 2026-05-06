@@ -1,92 +1,91 @@
-import { Heart } from "lucide-react";
-
-const dummyBooks = [
-  {
-    id: 1,
-    title: "Atomic Habits",
-    price: "₹199",
-    location: "Delhi",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: 2,
-    title: "Rich Dad Poor Dad",
-    price: "₹149",
-    location: "Noida",
-    image: "https://via.placeholder.com/150",
-  },
-  {
-    id: 3,
-    title: "The Alchemist",
-    price: "₹120",
-    location: "Ghaziabad",
-    image: "https://via.placeholder.com/150",
-  },
-];
+import AppLayout from "../layouts/AppLayout";
+import { useEffect, useState } from "react";
+import { getWishlist } from "../services/listingService";
+import BookCard from "../components/BookCard";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Favourites() {
+  const [wishlistBooks, setWishlistBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const res = await getWishlist();
+
+        if (res.data?.success) {
+          setWishlistBooks(res.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch wishlist");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWishlist();
+  }, []);
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="p-5">Loading wishlist...</div>
+      </AppLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] px-6 py-10">
-      
-      <div className="max-w-6xl mx-auto">
-
-        {/* Heading */}
-        <h2 className="text-2xl font-semibold mb-6">
-          My favourites
-        </h2>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-
-          {dummyBooks.map((book) => (
-            <div
-              key={book.id}
-              className="bg-[var(--surface)] border border-[var(--border)] 
-              rounded-2xl overflow-hidden hover:shadow-md transition"
+    <AppLayout>
+      <div className="p-5 space-y-6">
+        {/* HEADER */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
             >
-              
-              {/* Image */}
-              <div className="w-full h-40 bg-[var(--bg)]">
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <ArrowLeft size={18} />
+            </button>
 
-              {/* Content */}
-              <div className="p-4 space-y-2">
-                
-                <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium">
-                    {book.title}
-                  </h3>
+            <h1 className="text-2xl font-semibold">My Wishlist</h1>
+          </div>
 
-                  <Heart size={16} className="text-[var(--accent)]" />
-                </div>
-
-                <p className="text-sm font-semibold">
-                  {book.price}
-                </p>
-
-                <p className="text-xs text-[var(--text-muted)]">
-                  {book.location}
-                </p>
-
-              </div>
-            </div>
-          ))}
-
+          <p className="text-sm text-[var(--text-muted)] ml-7">
+            {wishlistBooks.length} saved books
+          </p>
         </div>
 
-        {/* Empty state (optional later) */}
-        {dummyBooks.length === 0 && (
-          <p className="text-sm text-[var(--text-muted)] mt-6">
-            No favourites yet
-          </p>
-        )}
+        {/* EMPTY STATE */}
+        {wishlistBooks.length === 0 ? (
+          <div
+            className="rounded-3xl border border-[var(--border)] 
+            bg-[var(--surface)] p-10 text-center
+            shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+          >
+            <Heart
+              size={48}
+              className="mx-auto text-[var(--text-muted)] mb-4"
+            />
 
+            <h2 className="text-xl font-semibold mb-2">
+              Your wishlist is empty
+            </h2>
+
+            <p className="text-sm text-[var(--text-muted)]">
+              Save books you love and revisit them anytime.
+            </p>
+          </div>
+        ) : (
+          /* BOOK GRID */
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {wishlistBooks.map((book) => (
+              <BookCard key={book._id} book={book} />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

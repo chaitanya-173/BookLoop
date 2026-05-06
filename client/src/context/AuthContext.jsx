@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       return { ok: false };
     } catch (err) {
       toast.error(
-        err?.response?.data?.message || err.message || "Signup error"
+        err?.response?.data?.message || err.message || "Signup error",
       );
       return { ok: false };
     }
@@ -63,6 +63,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const toggleWishlistItem = (listingId) => {
+    if (!user) return;
+
+    const exists = user.wishlist?.some(
+      (item) => (item._id || item).toString() === listingId,
+    );
+
+    let updatedWishlist;
+
+    if (exists) {
+      updatedWishlist = user.wishlist.filter(
+        (item) => (item._id || item).toString() !== listingId,
+      );
+    } else {
+      updatedWishlist = [...(user.wishlist || []), listingId];
+    }
+
+    setUser({
+      ...user,
+      wishlist: updatedWishlist,
+    });
+  };
+
+  const isInWishlist = (listingId) => {
+    return user?.wishlist?.some(
+      (item) => (item._id || item).toString() === listingId,
+    );
+  };
+
   const logout = async () => {
     try {
       const res = await logoutService();
@@ -75,7 +104,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loadingUser, signup, login, logout, fetchMe }}
+      value={{
+  user,
+  loadingUser,
+  signup,
+  login,
+  logout,
+  fetchMe,
+  toggleWishlistItem,
+  isInWishlist,
+}}
     >
       {children}
     </AuthContext.Provider>

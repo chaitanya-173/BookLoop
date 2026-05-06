@@ -1,8 +1,59 @@
-import { Heart, MapPin, Phone, User, Clock } from "lucide-react";
+import {
+  Heart,
+  MapPin,
+  Phone,
+  User,
+  Clock,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { toggleWishlist, deleteListing } from "../services/listingService";
+import { toast } from "react-hot-toast";
+import { useState } from "react";
 
-export default function BookCard({ book }) {
+export default function BookCard({ book, showOwnerControls = false }) {
   const navigate = useNavigate();
+  const { user, toggleWishlistItem, isInWishlist } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const wished = isInWishlist(book._id);
+
+  const handleWishlist = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      toast.error("Please login first");
+      return;
+    }
+    try {
+      toggleWishlistItem(book._id);
+      const res = await toggleWishlist(book._id);
+      toast.success(wished ? "Removed from wishlist" : "Added to wishlist");
+    } catch (error) {
+      toast.error("Wishlist update failed");
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this listing?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteListing(book._id);
+
+      toast.success("Listing deleted");
+
+      window.location.reload(); // simple for now
+    } catch (error) {
+      toast.error("Delete failed");
+    }
+  };
 
   return (
     <div
@@ -17,20 +68,68 @@ export default function BookCard({ book }) {
           <img
             src={`data:image/jpeg;base64,${book.images?.[0]}`}
             className="max-h-full max-w-full object-contain"
+            alt={book.title}
           />
         </div>
 
-        {/* Favorite */}
+        {/* Wishlist */}
         <button
-          onClick={(e) => {
-            e.stopPropagation(); // prevent navigation
-            console.log("fav clicked");
-          }}
+          onClick={handleWishlist}
           className="absolute top-2 right-2 bg-black/50 backdrop-blur 
           text-white p-2 rounded-full hover:scale-110 transition"
         >
-          <Heart size={16} />
+          <Heart
+            size={16}
+            className={`transition ${
+              wished ? "fill-red-500 text-red-500" : "text-white"
+            }`}
+          />
         </button>
+
+        {showOwnerControls && (
+          <div className="absolute top-2 left-2 z-20">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(!menuOpen);
+              }}
+              className="bg-black/50 backdrop-blur text-white p-2 rounded-full hover:scale-110 transition"
+            >
+              <MoreVertical size={16} />
+            </button>
+
+            {menuOpen && (
+              <div
+                className="absolute mt-2 left-0 w-36 rounded-xl 
+        bg-[var(--surface)] border border-[var(--border)] 
+        shadow-lg overflow-hidden"
+              >
+                {/* Edit */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/edit-listing/${book._id}`);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 pt-3 
+          text-sm hover:bg-[var(--bg)]"
+                >
+                  <Pencil size={14} />
+                  Edit
+                </button>
+
+                {/* Delete */}
+                <button
+                  onClick={handleDelete}
+                  className="w-full flex items-center gap-2 px-4 py-3 
+          text-sm text-red-500 hover:bg-red-500/10"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* CONTENT */}
@@ -53,10 +152,10 @@ export default function BookCard({ book }) {
           {book.type === "donate" ? "Free" : `₹ ${book.price}`}
         </p>
 
-        {/* CATEGORY TAG */}
+        {/* CATEGORY */}
         <span
           className="inline-block text-xs px-2 py-1 rounded-full 
-        bg-[var(--bg)] border border-[var(--border)]"
+          bg-[var(--bg)] border border-[var(--border)]"
         >
           {book.category}
         </span>
@@ -67,7 +166,7 @@ export default function BookCard({ book }) {
         {/* CONTACT */}
         <p className="text-xs text-[var(--text-muted)] flex items-center gap-1">
           <Phone size={12} />
-          8318641930 {/* TODO: dynamic later */}
+          {book.user?.phone || "Phone unavailable"}
         </p>
 
         <p className="text-xs text-[var(--text-muted)] flex items-center gap-1">

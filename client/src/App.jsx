@@ -50,6 +50,15 @@ export default function App() {
         />
 
         <Route
+          path="/edit-listing/:id"
+          element={
+            <ProtectedRoute>
+              <Sell />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/sell"
           element={
             <ProtectedRoute>

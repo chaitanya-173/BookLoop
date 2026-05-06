@@ -1,16 +1,23 @@
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
 import CategoryDropdown from "../components/CategoryDropdown";
-import { createListing } from "../services/listingService";
+import {
+  createListing,
+  getListingById,
+  updateListing,
+} from "../services/listingService";
 import { useListings } from "../context/ListingsContext";
 import { toast } from "react-hot-toast";
 
 export default function Sell() {
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
   const [type, setType] = useState("sell");
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const { refreshListings } = useListings();
+  const [selected, setSelected] = useState(selectedCategory || "");
 
   const [bookData, setBookData] = useState({
     title: "",
@@ -20,6 +27,36 @@ export default function Sell() {
     author: "",
     description: "",
   });
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!isEditMode) return;
+
+      try {
+        const res = await getListingById(id);
+
+        if (res.data?.success) {
+          const listing = res.data.data;
+
+          setType(listing.type);
+          setImages(listing.images || []);
+
+          setBookData({
+            title: listing.title || "",
+            category: listing.category || "",
+            price: listing.price || 0,
+            condition: listing.condition || "",
+            author: listing.author || "",
+            description: listing.description || "",
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to load listing");
+      }
+    };
+
+    fetchListing();
+  }, [id]);
 
   const inputRef = useRef();
 
@@ -67,12 +104,17 @@ export default function Sell() {
       formData.append("images", img);
     });
 
-    const res = await createListing(formData);
+    const res = isEditMode
+      ? await updateListing(id, formData)
+      : await createListing(formData);
 
     if (res.data?.success) {
       const listingId = res.data.data._id;
       await refreshListings(); // refresh global listings
-      toast.success(res.data.message || "Listing created");
+      toast.success(
+        res.data.message ||
+          (isEditMode ? "Listing updated" : "Listing created"),
+      );
       navigate(`/listing/${listingId}`);
     } else {
       toast.error(res.data?.message || "Failed to create listing");
@@ -124,7 +166,11 @@ export default function Sell() {
                       className="relative rounded-lg overflow-hidden border border-[var(--border)]"
                     >
                       <img
-                        src={URL.createObjectURL(img)}
+                        src={
+                          typeof img === "string"
+                            ? `data:image/jpeg;base64,${img}`
+                            : URL.createObjectURL(img)
+                        }
                         className="w-full h-24 object-cover"
                       />
                       <button
@@ -157,6 +203,7 @@ export default function Sell() {
 
             {/* CATEGORY */}
             <CategoryDropdown
+              selectedCategory={bookData.category}
               onSelect={(val) =>
                 setBookData((prev) => ({
                   ...prev,
@@ -258,7 +305,7 @@ export default function Sell() {
               onClick={handleSubmit}
               className="w-full py-3 rounded-xl bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90 transition"
             >
-              Post listing
+              {isEditMode ? "Update Listing" : "Post Listing"}
             </button>
           </div>
         </div>

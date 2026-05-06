@@ -56,7 +56,9 @@ export const login = async (req, res) => {
     // Find user by email or username
     const user = await UserModel.findOne({
       $or: [{ email: identifier }, { username: identifier }],
-    }).select("+password");
+    })
+      .select("+password")
+      .populate("wishlist");
 
     if (!user) return errorResponse(res, "Invalid credentials", 400);
 
@@ -75,8 +77,10 @@ export const login = async (req, res) => {
     return successResponse(res, "Login successful", {
       token,
       id: user._id,
+      name: user.name,
       username: user.username,
       email: user.email,
+      wishlist: user.wishlist,
     });
   } catch (error) {
     return errorResponse(res, error.message, 500);
@@ -93,5 +97,6 @@ export const logout = (req, res) => {
 };
 
 export const getCurrentUser = async (req, res) => {
-  return successResponse(res, "User fetched", req.user);
+  const user = await UserModel.findById(req.user._id).populate("wishlist");
+  return successResponse(res, "User fetched", user);
 };

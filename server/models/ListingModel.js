@@ -7,52 +7,49 @@ const listingSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     category: {
       type: String,
       required: true,
       trim: true,
     },
-
     type: {
       type: String,
       required: true,
       enum: ["sell", "donate"],
     },
-
     price: {
       type: Number,
       default: 0,
     },
-
     condition: {
       type: String,
       required: true,
       trim: true,
     },
-
     author: {
       type: String,
       trim: true,
     },
-
     description: {
       type: String,
       trim: true,
     },
-
     images: [
       {
         type: String, // base64 string
       },
     ],
-
+    status: {
+      type: String,
+      enum: ["available", "sold"],
+      default: "available",
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const ListingModel = mongoose.model("Listing", listingSchema);
