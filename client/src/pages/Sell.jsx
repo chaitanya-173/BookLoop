@@ -17,7 +17,6 @@ export default function Sell() {
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const { refreshListings } = useListings();
-  const [selected, setSelected] = useState(selectedCategory || "");
 
   const [bookData, setBookData] = useState({
     title: "",
@@ -101,8 +100,10 @@ export default function Sell() {
     formData.append("description", description);
 
     images.forEach((img) => {
-      formData.append("images", img);
-    });
+  if (typeof img !== "string") {
+    formData.append("images", img);
+  }
+});
 
     const res = isEditMode
       ? await updateListing(id, formData)
@@ -122,10 +123,12 @@ export default function Sell() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout showSearch={false}>
       <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] px-4 py-6">
         <div className="max-w-xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">Sell your book</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            {isEditMode ? "Edit your listing" : "Sell your book"}
+          </h2>
 
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)]">
             {/* IMAGE UPLOAD (UNCHANGED) */}

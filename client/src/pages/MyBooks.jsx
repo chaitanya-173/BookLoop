@@ -26,7 +26,7 @@ export default function MyBooks() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {myBooks.map((book) => (
-            <BookCard key={book._id} book={book} showOwnerControls={true} />
+            <BookCard key={book._id} book={book} />
           ))}
         </div>
       </div>

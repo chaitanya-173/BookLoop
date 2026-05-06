@@ -30,9 +30,33 @@ export const createListing = async (req, res) => {
 };
 
 // GET ALL LISTINGS
+// export const getListings = async (req, res) => {
+//   try {
+//     const listings = await ListingModel.find()
+//       .sort({ createdAt: -1 })
+//       .populate("user", "name");
+
+//     return successResponse(res, "Listings fetched", listings);
+//   } catch (error) {
+//     return errorResponse(res, error.message, 500);
+//   }
+// };
+
 export const getListings = async (req, res) => {
   try {
-    const listings = await ListingModel.find()
+    const { search = "" } = req.query;
+
+    const query = search
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { author: { $regex: search, $options: "i" } },
+            { category: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const listings = await ListingModel.find(query)
       .sort({ createdAt: -1 })
       .populate("user", "name");
 
@@ -47,7 +71,7 @@ export const getListingById = async (req, res) => {
   try {
     const listing = await ListingModel.findById(req.params.id).populate(
       "user",
-      "name email phone location profileImage"
+      "name email phone location profileImage",
     );
 
     if (!listing) {
@@ -76,10 +100,7 @@ export const deleteListing = async (req, res) => {
     await listing.deleteOne();
 
     // Remove from all wishlists
-    await UserModel.updateMany(
-      {},
-      { $pull: { wishlist: listing._id } }
-    );
+    await UserModel.updateMany({}, { $pull: { wishlist: listing._id } });
 
     return successResponse(res, "Listing deleted");
   } catch (error) {
@@ -100,15 +121,8 @@ export const updateListing = async (req, res) => {
       return errorResponse(res, "Unauthorized", 403);
     }
 
-    const {
-      title,
-      category,
-      type,
-      price,
-      condition,
-      author,
-      description,
-    } = req.body;
+    const { title, category, type, price, condition, author, description } =
+      req.body;
 
     listing.title = title || listing.title;
     listing.category = category || listing.category;
@@ -120,9 +134,9 @@ export const updateListing = async (req, res) => {
 
     // Replace images only if new uploaded
     if (req.files?.length > 0) {
-      listing.images = req.files.map((file) =>
-        file.buffer.toString("base64")
-      );
+      const newImages = req.files.map((file) => file.buffer.toString("base64"));
+
+      listing.images = [...listing.images, ...newImages].slice(0, 5);
     }
 
     await listing.save();
@@ -179,11 +193,7 @@ export const getWishlist = async (req, res) => {
       return errorResponse(res, "User not found", 404);
     }
 
-    return successResponse(
-      res,
-      "Wishlist fetched successfully",
-      user.wishlist
-    );
+    return successResponse(res, "Wishlist fetched successfully", user.wishlist);
   } catch (error) {
     return errorResponse(res, error.message, 500);
   }
@@ -202,16 +212,11 @@ export const toggleListingStatus = async (req, res) => {
       return errorResponse(res, "Unauthorized", 403);
     }
 
-    listing.status =
-      listing.status === "available" ? "sold" : "available";
+    listing.status = listing.status === "available" ? "sold" : "available";
 
     await listing.save();
 
-    return successResponse(
-      res,
-      `Listing marked as ${listing.status}`,
-      listing
-    );
+    return successResponse(res, `Listing marked as ${listing.status}`, listing);
   } catch (error) {
     return errorResponse(res, error.message, 500);
   }

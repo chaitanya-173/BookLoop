@@ -10,9 +10,13 @@ export const createListing = async (formData) => {
 };
 
 // Get all listings
-export const getListings = async () => {
-  return await api.get("/api/listings");
-};
+// export const getListings = async () => {
+//   return await api.get("/api/listings");
+// }
+
+export const getListings = async (search = "") => {
+  return await api.get(`/api/listings?search=${encodeURIComponent(search)}`);
+};;
 
 // Get single listing
 export const getListingById = async (id) => {

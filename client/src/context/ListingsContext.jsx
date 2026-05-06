@@ -7,9 +7,11 @@ export const ListingsProvider = ({ children }) => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchListings = async () => {
+  const fetchListings = async (search = "") => {
     try {
-      const res = await getListings();
+      setLoading(true);
+
+      const res = await getListings(search);
 
       if (res.data?.success) {
         setListings(res.data.data);
@@ -22,9 +24,7 @@ export const ListingsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (listings.length === 0) {
-      fetchListings();
-    }
+    fetchListings();
   }, []);
 
   return (

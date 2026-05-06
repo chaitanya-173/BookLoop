@@ -1,66 +1,45 @@
-import {
-  Heart,
-  MapPin,
-  Phone,
-  User,
-  Clock,
-  MoreVertical,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Heart, MapPin, Phone, User, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { toggleWishlist, deleteListing } from "../services/listingService";
+import { toggleWishlist } from "../services/listingService";
 import { toast } from "react-hot-toast";
-import { useState } from "react";
 
-export default function BookCard({ book, showOwnerControls = false }) {
+export default function BookCard({ book }) {
   const navigate = useNavigate();
   const { user, toggleWishlistItem, isInWishlist } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
+
   const wished = isInWishlist(book._id);
 
   const handleWishlist = async (e) => {
     e.stopPropagation();
+
     if (!user) {
       toast.error("Please login first");
       return;
     }
+
     try {
       toggleWishlistItem(book._id);
-      const res = await toggleWishlist(book._id);
-      toast.success(wished ? "Removed from wishlist" : "Added to wishlist");
+      await toggleWishlist(book._id);
+
+      toast.success(
+        wished ? "Removed from wishlist" : "Added to wishlist"
+      );
     } catch (error) {
       toast.error("Wishlist update failed");
-    }
-  };
-
-  const handleDelete = async (e) => {
-    e.stopPropagation();
-
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this listing?",
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteListing(book._id);
-
-      toast.success("Listing deleted");
-
-      window.location.reload(); // simple for now
-    } catch (error) {
-      toast.error("Delete failed");
     }
   };
 
   return (
     <div
       onClick={() => navigate(`/listing/${book._id}`)}
-      className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl 
-      overflow-hidden shadow hover:shadow-lg transition-all duration-300 
-      hover:scale-[1.03] cursor-pointer group"
+      className={`bg-[var(--surface)] border border-[var(--border)] rounded-2xl 
+      overflow-hidden shadow transition-all duration-300 group
+      ${
+        book.status === "sold"
+          ? "grayscale opacity-70 cursor-pointer"
+          : "hover:shadow-lg hover:scale-[1.03] cursor-pointer"
+      }`}
     >
       {/* IMAGE */}
       <div className="relative">
@@ -72,71 +51,48 @@ export default function BookCard({ book, showOwnerControls = false }) {
           />
         </div>
 
+        {/* SOLD OVERLAY */}
+        {book.status === "sold" && (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <span
+                className="text-2xl font-bold text-white 
+                bg-black/50 px-4 py-1 rounded-lg tracking-widest"
+              >
+                SOLD
+              </span>
+            </div>
+
+            <div className="absolute inset-0 pointer-events-none z-0">
+              <div className="absolute w-[140%] h-[2px] bg-white/40 rotate-45 top-1/2 -left-10"></div>
+            </div>
+          </>
+        )}
+
         {/* Wishlist */}
         <button
           onClick={handleWishlist}
           className="absolute top-2 right-2 bg-black/50 backdrop-blur 
-          text-white p-2 rounded-full hover:scale-110 transition"
+          text-white p-2 rounded-full hover:scale-110 transition z-20"
         >
           <Heart
             size={16}
             className={`transition ${
-              wished ? "fill-red-500 text-red-500" : "text-white"
+              wished
+                ? "fill-red-500 text-red-500"
+                : "text-white"
             }`}
           />
         </button>
-
-        {showOwnerControls && (
-          <div className="absolute top-2 left-2 z-20">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setMenuOpen(!menuOpen);
-              }}
-              className="bg-black/50 backdrop-blur text-white p-2 rounded-full hover:scale-110 transition"
-            >
-              <MoreVertical size={16} />
-            </button>
-
-            {menuOpen && (
-              <div
-                className="absolute mt-2 left-0 w-36 rounded-xl 
-        bg-[var(--surface)] border border-[var(--border)] 
-        shadow-lg overflow-hidden"
-              >
-                {/* Edit */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/edit-listing/${book._id}`);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 pt-3 
-          text-sm hover:bg-[var(--bg)]"
-                >
-                  <Pencil size={14} />
-                  Edit
-                </button>
-
-                {/* Delete */}
-                <button
-                  onClick={handleDelete}
-                  className="w-full flex items-center gap-2 px-4 py-3 
-          text-sm text-red-500 hover:bg-red-500/10"
-                >
-                  <Trash2 size={14} />
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* CONTENT */}
       <div className="p-4 space-y-2">
         {/* TITLE + DISTANCE */}
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-semibold text-sm line-clamp-1">{book.title}</h3>
+          <h3 className="font-semibold text-sm line-clamp-1">
+            {book.title}
+          </h3>
 
           <span
             className="flex items-center gap-1 text-xs px-2 py-1 rounded-full 
@@ -149,7 +105,9 @@ export default function BookCard({ book, showOwnerControls = false }) {
 
         {/* PRICE */}
         <p className="text-[var(--accent)] font-semibold text-sm">
-          {book.type === "donate" ? "Free" : `₹ ${book.price}`}
+          {book.type === "donate"
+            ? "Free"
+            : `₹ ${book.price}`}
         </p>
 
         {/* CATEGORY */}
@@ -178,11 +136,14 @@ export default function BookCard({ book, showOwnerControls = false }) {
         <div className="flex justify-between items-center pt-2">
           <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
             <Clock size={12} />
-            {new Date(book.createdAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            {new Date(book.createdAt).toLocaleDateString(
+              "en-US",
+              {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }
+            )}
           </span>
 
           <button
