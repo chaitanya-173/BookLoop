@@ -5,13 +5,17 @@ import { toast } from "react-hot-toast";
 import { getListingById, toggleWishlist } from "../services/listingService";
 import { useAuth } from "../context/AuthContext";
 import ListingOwnerMenu from "../components/ListingOwnerMenu";
+import EmptyState from "../components/EmptyState";
+import { formatDistance, getDistanceMeters } from "../utils/distance";
 import {
   MapPin,
   User,
   Mail,
   Phone,
+  MessageCircle,
   Clock,
   Heart,
+  BookX,
   Share2,
   ArrowLeft,
   ChevronLeft,
@@ -30,16 +34,28 @@ export default function ListingDetails() {
   const { user, toggleWishlistItem, isInWishlist } = useAuth();
 
   const [listing, setListing] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [current, setCurrent] = useState(0);
 
   const wished = listing ? isInWishlist(listing._id) : false;
 
   useEffect(() => {
     const fetchListing = async () => {
-      const res = await getListingById(id);
+      try {
+        setLoading(true);
+        setNotFound(false);
+        const res = await getListingById(id);
 
-      if (res.data?.success) {
-        setListing(res.data.data);
+        if (res.data?.success) {
+          setListing(res.data.data);
+        } else {
+          setNotFound(true);
+        }
+      } catch {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -73,9 +89,7 @@ export default function ListingDetails() {
       toggleWishlistItem(listing._id);
       await toggleWishlist(listing._id);
 
-      toast.success(
-        wished ? "Removed from wishlist" : "Added to wishlist"
-      );
+      toast.success(wished ? "Removed from wishlist" : "Added to wishlist");
     } catch {
       toast.error("Wishlist update failed");
     }
@@ -87,14 +101,38 @@ export default function ListingDetails() {
 
   const prev = () => {
     setCurrent(
-      (prev) => (prev - 1 + listing.images.length) % listing.images.length
+      (prev) => (prev - 1 + listing.images.length) % listing.images.length,
     );
   };
 
-  if (!listing) {
+  if (loading) {
     return (
-      <AppLayout>
-        <p className="p-5">Loading...</p>
+      <AppLayout showSearch={false}>
+        <div className="grid md:grid-cols-2 gap-6 animate-pulse">
+          <div className="h-[350px] rounded-2xl bg-[var(--surface)] border border-[var(--border)]" />
+
+          <div className="space-y-4">
+            <div className="h-7 w-2/3 rounded bg-[var(--surface)]" />
+            <div className="h-5 w-24 rounded bg-[var(--surface)]" />
+            <div className="h-8 w-40 rounded-full bg-[var(--surface)]" />
+            <div className="h-20 rounded-2xl bg-[var(--surface)]" />
+            <div className="h-32 rounded-2xl bg-[var(--surface)]" />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (notFound || !listing) {
+    return (
+      <AppLayout showSearch={false}>
+        <EmptyState
+          icon={BookX}
+          title="Listing not found"
+          message="This book may have been deleted or is no longer available."
+          actionLabel="Browse books"
+          onAction={() => navigate("/")}
+        />
       </AppLayout>
     );
   }
@@ -102,8 +140,17 @@ export default function ListingDetails() {
   const isOwner =
     user &&
     listing.user &&
-    (listing.user._id === user._id ||
-      listing.user._id === user.id);
+    (listing.user._id === user._id || listing.user._id === user.id);
+  const sellerLocation = listing.user?.location;
+  const distanceLabel = formatDistance(
+    getDistanceMeters(user?.location, sellerLocation),
+  );
+  const sellerPhone = listing.user?.phone?.trim();
+  const whatsappUrl = sellerPhone
+    ? `https://wa.me/91${sellerPhone}?text=${encodeURIComponent(
+        `Hi, I found your book "${listing.title}" on BookLoop. Is it still available?`,
+      )}`
+    : "";
 
   return (
     <AppLayout showSearch={false}>
@@ -124,11 +171,7 @@ export default function ListingDetails() {
                 className={`relative w-full h-[350px] flex items-center justify-center 
                 bg-[var(--surface)] rounded-2xl border border-[var(--border)] 
                 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
-                ${
-                  listing.status === "sold"
-                    ? "grayscale opacity-80"
-                    : ""
-                }`}
+                ${listing.status === "sold" ? "grayscale opacity-80" : ""}`}
               >
                 <img
                   src={`data:image/jpeg;base64,${listing.images[current]}`}
@@ -198,14 +241,10 @@ export default function ListingDetails() {
               {/* TITLE + ACTIONS */}
               <div className="flex justify-between items-start">
                 <div>
-                  <h1 className="text-xl font-semibold">
-                    {listing.title}
-                  </h1>
+                  <h1 className="text-xl font-semibold">{listing.title}</h1>
 
                   <p className="text-lg font-bold text-[var(--accent)]">
-                    {listing.type === "donate"
-                      ? "Free"
-                      : `₹ ${listing.price}`}
+                    {listing.type === "donate" ? "Free" : `₹ ${listing.price}`}
                   </p>
                 </div>
 
@@ -218,9 +257,7 @@ export default function ListingDetails() {
                     <Heart
                       size={16}
                       className={`transition ${
-                        wished
-                          ? "fill-red-500 text-red-500"
-                          : ""
+                        wished ? "fill-red-500 text-red-500" : ""
                       }`}
                     />
                   </button>
@@ -232,9 +269,7 @@ export default function ListingDetails() {
                     <Share2 size={16} />
                   </button>
 
-                  {isOwner && (
-                    <ListingOwnerMenu book={listing} />
-                  )}
+                  {isOwner && <ListingOwnerMenu book={listing} />}
                 </div>
               </div>
 
@@ -251,9 +286,7 @@ export default function ListingDetails() {
               </p>
 
               {listing.author && (
-                <p className="text-sm">
-                  Author: {listing.author}
-                </p>
+                <p className="text-sm">Author: {listing.author}</p>
               )}
 
               <div className="border-t border-[var(--border)]"></div>
@@ -261,9 +294,7 @@ export default function ListingDetails() {
               {/* DESCRIPTION */}
               {listing.description && (
                 <div>
-                  <h3 className="text-sm font-medium mb-1">
-                    Description
-                  </h3>
+                  <h3 className="text-sm font-medium mb-1">Description</h3>
 
                   <p
                     className={`text-sm text-[var(--text-muted)] ${
@@ -275,14 +306,10 @@ export default function ListingDetails() {
 
                   {listing.description.length > 120 && (
                     <button
-                      onClick={() =>
-                        setExpanded(!expanded)
-                      }
+                      onClick={() => setExpanded(!expanded)}
                       className="text-xs text-[var(--accent)] mt-1 hover:underline"
                     >
-                      {expanded
-                        ? "Show less"
-                        : "Show more"}
+                      {expanded ? "Show less" : "Show more"}
                     </button>
                   )}
                 </div>
@@ -294,9 +321,7 @@ export default function ListingDetails() {
 
               {/* SELLER INFO */}
               <div className="space-y-2">
-                <h3 className="text-sm font-medium">
-                  Seller Info
-                </h3>
+                <h3 className="text-sm font-medium">Seller Info</h3>
 
                 <p className="flex items-center gap-2 text-sm">
                   <User size={14} />
@@ -310,15 +335,34 @@ export default function ListingDetails() {
 
                 <p className="flex items-center gap-2 text-sm">
                   <Phone size={14} />
-                  {listing.user?.phone ||
-                    "Phone unavailable"}
+                  {listing.user?.phone || "Phone unavailable"}
                 </p>
+
+                {sellerPhone && !isOwner && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <a
+                      href={`tel:${sellerPhone}`}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90"
+                    >
+                      <Phone size={15} />
+                      Call seller
+                    </a>
+
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] text-sm font-medium hover:bg-[var(--surface)]"
+                    >
+                      <MessageCircle size={15} />
+                      WhatsApp
+                    </a>
+                  </div>
+                )}
 
                 <p className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                   <Clock size={14} />
-                  {new Date(
-                    listing.createdAt
-                  ).toLocaleDateString("en-US", {
+                  {new Date(listing.createdAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                     year: "numeric",
@@ -340,8 +384,7 @@ export default function ListingDetails() {
               </p>
 
               <p className="text-sm font-medium">
-                {listing.user?.location ||
-                  "Greater Noida"}
+                {sellerLocation?.address || "Location unavailable"}
               </p>
             </div>
 
@@ -350,7 +393,7 @@ export default function ListingDetails() {
               bg-[rgba(34,197,94,0.12)] text-[rgb(34,197,94)] font-medium"
             >
               <MapPin size={12} />
-              {"<100 m"}
+              {distanceLabel}
             </span>
           </div>
 
@@ -367,26 +410,17 @@ export default function ListingDetails() {
 
             <ul className="text-xs text-[var(--text-muted)] space-y-2">
               <li className="flex items-start gap-2">
-                <AlertTriangle
-                  size={14}
-                  className="mt-0.5 text-red-400"
-                />
+                <AlertTriangle size={14} className="mt-0.5 text-red-400" />
                 Never give money or product in advance.
               </li>
 
               <li className="flex items-start gap-2">
-                <CreditCard
-                  size={14}
-                  className="mt-0.5 text-red-400"
-                />
+                <CreditCard size={14} className="mt-0.5 text-red-400" />
                 Do not share UPI PIN while receiving money.
               </li>
 
               <li className="flex items-start gap-2">
-                <ShieldCheck
-                  size={14}
-                  className="mt-0.5 text-red-400"
-                />
+                <ShieldCheck size={14} className="mt-0.5 text-red-400" />
                 Be safe, meet buyers/sellers in public places.
               </li>
             </ul>
@@ -394,9 +428,8 @@ export default function ListingDetails() {
             <div className="border-t border-[var(--border)]"></div>
 
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
-              BookLoop is not responsible for fraudulent
-              activities. It simply connects nearby buyers
-              and sellers.
+              BookLoop is not responsible for fraudulent activities. It simply
+              connects nearby buyers and sellers.
             </p>
           </div>
         </div>

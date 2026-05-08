@@ -49,13 +49,13 @@ export default function Sell() {
             description: listing.description || "",
           });
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to load listing");
       }
     };
 
     fetchListing();
-  }, [id]);
+  }, [id, isEditMode]);
 
   const inputRef = useRef();
 

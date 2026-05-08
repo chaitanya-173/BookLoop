@@ -27,3 +27,28 @@ export const login = async (payload) => {
 export const logout = async () => {
   return await api.post("/api/auth/logout");
 };
+
+/**
+ * Update current user's profile
+ */
+export const updateProfile = async (formData) => {
+  return await api.put("/api/auth/profile", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+/**
+ * Update current user's saved location
+ */
+export const updateUserLocation = async (payload) => {
+  return await api.put("/api/auth/update-location", payload);
+};
+
+/**
+ * Submit user feedback
+ */
+export const submitFeedback = async (payload) => {
+  return await api.post("/api/auth/feedback", payload);
+};

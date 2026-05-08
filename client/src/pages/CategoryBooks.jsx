@@ -2,17 +2,22 @@ import AppLayout from "../layouts/AppLayout";
 import { useParams, useNavigate } from "react-router-dom";
 import { useListings } from "../context/ListingsContext";
 import BookCard from "../components/BookCard";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { BookGridSkeleton } from "../components/BookCardSkeleton";
+import EmptyState from "../components/EmptyState";
+import { sortListingsByDistance } from "../utils/listingSort";
 
 export default function CategoryBooks() {
   const { categoryName } = useParams();
   const { listings, loading } = useListings();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   if (loading) {
     return (
       <AppLayout>
-        <div className="p-5">Loading books...</div>
+        <BookGridSkeleton />
       </AppLayout>
     );
   }
@@ -25,15 +30,19 @@ export default function CategoryBooks() {
   let filteredBooks = [];
 
   if (normalizedCategory === "free-books") {
-    filteredBooks = listings.filter(
-      (book) => book.type?.toLowerCase() === "donate",
+    filteredBooks = sortListingsByDistance(
+      listings.filter((book) => book.type?.toLowerCase() === "donate"),
+      user?.location,
     );
   } else {
-    filteredBooks = listings.filter((book) => {
-      const parentCategory = book.category?.split("•")[0].trim().toLowerCase();
+    filteredBooks = sortListingsByDistance(
+      listings.filter((book) => {
+        const parentCategory = book.category?.split("•")[0].trim().toLowerCase();
 
-      return parentCategory === normalizedCategory;
-    });
+        return parentCategory === normalizedCategory;
+      }),
+      user?.location,
+    );
   }
 
   return (
@@ -66,9 +75,13 @@ export default function CategoryBooks() {
             ))}
           </div>
         ) : (
-          <div className="text-[var(--text-muted)]">
-            No books found in this category yet.
-          </div>
+          <EmptyState
+            icon={BookOpen}
+            title="No books found"
+            message="There are no books in this category yet."
+            actionLabel="Explore categories"
+            onAction={() => navigate("/categories")}
+          />
         )}
       </div>
     </AppLayout>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 const categories = [
@@ -112,11 +112,7 @@ export default function CategoryDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(null);
-  const [selected, setSelected] = useState(selectedCategory);
-
-  useEffect(() => {
-    setSelected(selectedCategory || "");
-  }, [selectedCategory]);
+  const selected = selectedCategory || "";
 
   return (
     <div className="relative">
@@ -171,7 +167,6 @@ export default function CategoryDropdown({
                       onClick={() => {
                         const value = `${cat.name} • ${opt}`;
 
-                        setSelected(value);
                         setOpen(false);
                         setActive(null);
 

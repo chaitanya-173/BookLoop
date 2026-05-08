@@ -2,6 +2,10 @@ import { Heart, MapPin, Phone, User, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toggleWishlist } from "../services/listingService";
+import {
+  formatDistance,
+  getDistanceMeters,
+} from "../utils/distance";
 import { toast } from "react-hot-toast";
 
 export default function BookCard({ book }) {
@@ -9,6 +13,8 @@ export default function BookCard({ book }) {
   const { user, toggleWishlistItem, isInWishlist } = useAuth();
 
   const wished = isInWishlist(book._id);
+  const distanceMeters = getDistanceMeters(user?.location, book.user?.location);
+  const distanceLabel = formatDistance(distanceMeters);
 
   const handleWishlist = async (e) => {
     e.stopPropagation();
@@ -25,7 +31,7 @@ export default function BookCard({ book }) {
       toast.success(
         wished ? "Removed from wishlist" : "Added to wishlist"
       );
-    } catch (error) {
+    } catch {
       toast.error("Wishlist update failed");
     }
   };
@@ -99,7 +105,7 @@ export default function BookCard({ book }) {
             bg-[rgba(34,197,94,0.12)] text-[rgb(34,197,94)] font-medium"
           >
             <MapPin size={12} />
-            {"<100 m"}
+            {distanceLabel}
           </span>
         </div>
 

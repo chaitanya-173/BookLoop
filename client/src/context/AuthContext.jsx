@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       setLoadingUser(true);
       const res = await fetchMeService();
       if (res.data?.success) setUser(res.data.data || res.data.user);
-    } catch (err) {
+    } catch {
       setUser(null);
     } finally {
       setLoadingUser(false);
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }) => {
       const res = await logoutService();
       setUser(null);
       toast.success(res.data?.message || "Logged out");
-    } catch (err) {
+    } catch {
       toast.error("Logout failed");
     }
   };

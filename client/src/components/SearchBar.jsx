@@ -12,15 +12,11 @@ export default function SearchBar() {
   );
 
   useEffect(() => {
-    setQuery(searchParams.get("search") || "");
-  }, [searchParams]);
-
-  useEffect(() => {
     const delay = setTimeout(() => {
       const trimmed = query.trim();
 
       // Only search from allowed browsing pages
-      const allowedPaths = ["/", "/categories", "/my-books", "/wishlist"];
+      const allowedPaths = ["/", "/categories", "/my-books", "/favourites"];
 
       if (!allowedPaths.includes(location.pathname)) return;
 
@@ -32,7 +28,7 @@ export default function SearchBar() {
     }, 400);
 
     return () => clearTimeout(delay);
-  }, [query]);
+  }, [query, location.pathname, navigate]);
 
   return (
     <div className="w-full relative">

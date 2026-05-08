@@ -1,10 +1,14 @@
 import AppLayout from "../layouts/AppLayout";
 import { useListings } from "../context/ListingsContext";
+import { useAuth } from "../context/AuthContext";
 import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
 import BookCard from "../components/BookCard";
+import { BookGridSkeleton } from "../components/BookCardSkeleton";
+import EmptyState from "../components/EmptyState";
+import { sortListingsByDistance } from "../utils/listingSort";
 import {
   ArrowRight,
   GraduationCap,
@@ -13,6 +17,7 @@ import {
   Library,
   Laptop,
   Gift,
+  SearchX,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -27,6 +32,7 @@ const trendingCategories = [
 
 export default function Home() {
   const { listings, loading } = useListings();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -36,13 +42,14 @@ export default function Home() {
   if (loading) {
     return (
       <AppLayout>
-        <div className="p-5">Loading books...</div>
+        <BookGridSkeleton />
       </AppLayout>
     );
   }
 
   // Search filter
-  const filteredListings = searchQuery
+  const filteredListings = sortListingsByDistance(
+    searchQuery
     ? listings.filter((book) =>
         [
           book.title,
@@ -53,19 +60,14 @@ export default function Home() {
           .toLowerCase()
           .includes(searchQuery)
       )
-    : listings;
+    : listings,
+    user?.location,
+  );
 
   // Nearby books
   const nearbyBooks = filteredListings
     .filter((book) => book.status !== "sold")
     .slice(0, 4);
-
-  // Free books
-  const freeBooks = filteredListings.filter(
-    (book) =>
-      book.type?.toLowerCase() === "donate" &&
-      book.status !== "sold"
-  );
 
   const handleShare = async () => {
     try {
@@ -111,9 +113,13 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="text-[var(--text-muted)]">
-                No matching books found.
-              </div>
+              <EmptyState
+                icon={SearchX}
+                title="No matching books"
+                message="Try a different title, author, or category."
+                actionLabel="Clear search"
+                onAction={() => navigate("/")}
+              />
             )}
           </section>
         ) : (
@@ -182,9 +188,13 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <p className="text-[var(--text-muted)]">
-                  No nearby books available yet.
-                </p>
+                <EmptyState
+                  icon={BookOpen}
+                  title="No books available yet"
+                  message="Be the first person nearby to list a book."
+                  actionLabel="Sell a Book"
+                  onAction={() => navigate("/sell")}
+                />
               )}
             </section>
 

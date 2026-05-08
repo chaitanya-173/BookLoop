@@ -37,8 +37,8 @@ export default function Navbar({ showSearch = true }) {
             Categories
           </NavLink>
 
-          <NavLink to="/my-books" className={navClass}>
-            My Books
+          <NavLink to="/favourites" className={navClass}>
+            Wishlist
           </NavLink>
         </div>
 

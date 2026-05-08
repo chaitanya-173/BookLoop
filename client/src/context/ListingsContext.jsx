@@ -16,7 +16,7 @@ export const ListingsProvider = ({ children }) => {
       if (res.data?.success) {
         setListings(res.data.data);
       }
-    } catch (error) {
+    } catch {
       console.error("Failed to fetch listings");
     } finally {
       setLoading(false);

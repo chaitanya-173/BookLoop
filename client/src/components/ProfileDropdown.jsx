@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import { submitFeedback } from "../services/authService";
 import {
   User,
   Pencil,
-  Heart,
+  BookOpen,
   MapPin,
   MessageSquare,
   LogOut,
@@ -14,7 +16,14 @@ export default function ProfileDropdown() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState("experience");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const ref = useRef();
+  const profileImage = user?.profileImage
+    ? `data:image/jpeg;base64,${user.profileImage}`
+    : user?.avatar;
 
   useEffect(() => {
     function handleClick(e) {
@@ -25,6 +34,53 @@ export default function ProfileDropdown() {
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, []);
+
+  const closeDropdown = () => {
+    setOpen(false);
+    setFeedbackOpen(false);
+  };
+
+  const handleSubmitFeedback = async (event) => {
+    event.preventDefault();
+
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/login");
+      closeDropdown();
+      return;
+    }
+
+    if (feedbackMessage.trim().length < 5) {
+      toast.error("Please write a little more feedback");
+      return;
+    }
+
+    try {
+      setSubmittingFeedback(true);
+      const res = await submitFeedback({
+        category: feedbackCategory,
+        message: feedbackMessage.trim(),
+      });
+
+      if (res.data?.success) {
+        toast.success(res.data.message || "Feedback submitted");
+        setFeedbackMessage("");
+        setFeedbackCategory("experience");
+        closeDropdown();
+      } else {
+        toast.error(res.data?.message || "Failed to submit feedback");
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message;
+      toast.error(
+        typeof message === "string"
+          ? message
+          : message?.message || "Failed to submit feedback",
+      );
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
 
   return (
     <div className="relative" ref={ref}>
@@ -40,9 +96,9 @@ export default function ProfileDropdown() {
         <div className="absolute right-0 mt-2 translate-x-1 w-64 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl overflow-hidden z-50">
           {/* Top Profile Section */}
           <div className="flex flex-col items-center py-5 px-4 border-b border-[var(--border)]">
-            {user?.avatar ? (
+            {profileImage ? (
               <img
-                src={user.avatar}
+                src={profileImage}
                 alt="profile"
                 className="w-20 h-20 rounded-full object-cover mb-3"
               />
@@ -64,27 +120,81 @@ export default function ProfileDropdown() {
             <MenuItem
               icon={<Pencil size={16} />}
               text="Edit Profile"
-              onClick={() => navigate("/edit-profile")}
+              onClick={() => {
+                navigate("/edit-profile");
+                closeDropdown();
+              }}
             />
 
             <MenuItem
-              icon={<Heart size={16} />}
-              text="My Favourites"
-              onClick={() => navigate("/favourites")}
+              icon={<BookOpen size={16} />}
+              text="My Books"
+              onClick={() => {
+                navigate("/my-books");
+                closeDropdown();
+              }}
             />
 
             <MenuItem
               icon={<MapPin size={16} />}
               text="Update Location"
-              onClick={() => navigate("/edit-profile")}
+              onClick={() => {
+                navigate("/edit-profile");
+                closeDropdown();
+              }}
             />
 
             <MenuItem
               icon={<MessageSquare size={16} />}
               text="Feedback"
-              onClick={() => alert("Open feedback modal")}
+              onClick={() => setFeedbackOpen((current) => !current)}
             />
           </div>
+
+          {feedbackOpen && (
+            <form
+              onSubmit={handleSubmitFeedback}
+              className="border-t border-[var(--border)] p-4 space-y-3"
+            >
+              <select
+                value={feedbackCategory}
+                onChange={(event) => setFeedbackCategory(event.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-sm focus:outline-none"
+              >
+                <option value="experience">Experience</option>
+                <option value="bug">Bug</option>
+                <option value="idea">Idea</option>
+                <option value="other">Other</option>
+              </select>
+
+              <textarea
+                value={feedbackMessage}
+                onChange={(event) => setFeedbackMessage(event.target.value)}
+                rows={4}
+                maxLength={1000}
+                placeholder="Tell us what should be better..."
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-sm resize-none focus:outline-none"
+              />
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFeedbackOpen(false)}
+                  className="px-3 py-2 rounded-lg border border-[var(--border)] text-xs hover:bg-[var(--bg)]"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={submittingFeedback}
+                  className="px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90"
+                >
+                  {submittingFeedback ? "Sending..." : "Send"}
+                </button>
+              </div>
+            </form>
+          )}
 
           {/* Divider */}
           <div className="border-t border-[var(--border)]" />
@@ -97,7 +207,7 @@ export default function ProfileDropdown() {
               } else {
                 navigate("/login");
               }
-              setOpen(false);
+              closeDropdown();
             }}
             className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-[var(--bg)]"
           >
