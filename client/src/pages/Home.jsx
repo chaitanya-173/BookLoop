@@ -169,7 +169,7 @@ export default function Home() {
 
                 <button
                   onClick={() =>
-                    navigate("/categories")
+                    navigate("/nearby-books")
                   }
                   className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
                 >

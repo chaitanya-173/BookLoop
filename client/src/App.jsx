@@ -15,6 +15,7 @@ import EditProfile from "./pages/EditProfile";
 import Favourites from "./pages/Favourites";
 import ListingDetails from "./pages/ListingDetails";
 import CategoryBooks from "./pages/CategoryBooks";
+import NearbyBooks from "./pages/NearbyBooks";
 
 export default function App() {
   return (
@@ -36,6 +37,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <MyBooks />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/nearby-books"
+          element={
+            <ProtectedRoute>
+              <NearbyBooks />
             </ProtectedRoute>
           }
         />

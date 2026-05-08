@@ -17,7 +17,9 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoadingUser(true);
       const res = await fetchMeService();
-      if (res.data?.success) setUser(res.data.data || res.data.user);
+      if (res.data?.success) {
+        setUser({ ...(res.data.data || res.data.user) });
+      }
     } catch {
       setUser(null);
     } finally {
@@ -50,11 +52,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (payload) => {
     try {
       const res = await loginService(payload);
+
       if (res.data?.success) {
-        setUser(res.data.data);
+        await fetchMe();
         toast.success(res.data.message || "Login successful");
         return { ok: true };
       }
+
       toast.error(res.data?.message || "Login failed");
       return { ok: false };
     } catch (err) {
@@ -105,15 +109,15 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-  user,
-  loadingUser,
-  signup,
-  login,
-  logout,
-  fetchMe,
-  toggleWishlistItem,
-  isInWishlist,
-}}
+        user,
+        loadingUser,
+        signup,
+        login,
+        logout,
+        fetchMe,
+        toggleWishlistItem,
+        isInWishlist,
+      }}
     >
       {children}
     </AuthContext.Provider>

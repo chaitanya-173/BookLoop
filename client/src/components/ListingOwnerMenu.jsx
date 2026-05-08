@@ -26,7 +26,8 @@ export default function ListingOwnerMenu({ book }) {
     try {
       await deleteListing(book._id);
       toast.success("Listing deleted");
-      window.location.href = "/my-books";
+      // window.location.href = "/my-books";
+      navigate("/my-books");
     } catch {
       toast.error("Delete failed");
     }

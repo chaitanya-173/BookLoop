@@ -163,7 +163,9 @@ export default function EditProfile() {
         toast.success(res.data.message || "Profile updated");
         await fetchMe();
         setProfileImage(null);
-        navigate(-1);
+        setTimeout(() => {
+          navigate(-1);
+        }, 150);
       } else {
         toast.error(res.data?.message || "Failed to update profile");
       }
