@@ -58,7 +58,7 @@ export const getListings = async (req, res) => {
 
     const listings = await ListingModel.find(query)
       .sort({ createdAt: -1 })
-      .populate("user", "name");
+      .populate("user", "name phone location");
 
     return successResponse(res, "Listings fetched", listings);
   } catch (error) {
@@ -185,7 +185,7 @@ export const getWishlist = async (req, res) => {
       path: "wishlist",
       populate: {
         path: "user",
-        select: "name",
+        select: "name phone location",
       },
     });
 

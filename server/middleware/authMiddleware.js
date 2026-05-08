@@ -3,21 +3,33 @@ import User from "../models/UserModel.js";
 
 export const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
+    const token = bearerToken || req.cookies.token;
 
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+    if (!token) {
+      return res.status(401).json({
+        message: "Not authorized, token missing",
+      });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = await User.findById(decoded.userId).select("-password");
 
-    // when user no longer exists
     if (!req.user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(401).json({
+        message: "User not found",
+      });
     }
 
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    console.error("Protect Middleware Error:", error);
+    return res.status(401).json({
+      message: error.message,
+    });
   }
 };
