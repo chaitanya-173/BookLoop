@@ -1,10 +1,7 @@
 import AppLayout from "../layouts/AppLayout";
 import { useListings } from "../context/ListingsContext";
 import { useAuth } from "../context/AuthContext";
-import {
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
@@ -36,8 +33,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const searchQuery =
-    searchParams.get("search")?.toLowerCase() || "";
+  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
 
   if (loading) {
     return (
@@ -50,17 +46,13 @@ export default function Home() {
   // Search filter
   const filteredListings = sortListingsByDistance(
     searchQuery
-    ? listings.filter((book) =>
-        [
-          book.title,
-          book.author,
-          book.category,
-        ]
-          .join(" ")
-          .toLowerCase()
-          .includes(searchQuery)
-      )
-    : listings,
+      ? listings.filter((book) =>
+          [book.title, book.author, book.category]
+            .join(" ")
+            .toLowerCase()
+            .includes(searchQuery),
+        )
+      : listings,
     user?.location,
   );
 
@@ -70,39 +62,38 @@ export default function Home() {
     .slice(0, 4);
 
   const handleShare = async () => {
+    const shareData = {
+      title: "BookLoop",
+      text: "Discover affordable books near you on BookLoop 📚",
+      url: window.location.origin,
+    };
+
     try {
       if (navigator.share) {
-        await navigator.share({
-          title: "BookLoop",
-          text: "Join BookLoop and make books affordable for everyone!",
-          url: window.location.origin,
-        });
+        await navigator.share(shareData);
+        toast.success("BookLoop shared successfully!");
       } else {
-        await navigator.clipboard.writeText(
-          window.location.origin
-        );
+        await navigator.clipboard.writeText(shareData.url);
         toast.success("BookLoop link copied!");
       }
-    } catch {
-      toast.error("Failed to share");
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        toast.error("Failed to share");
+      }
     }
   };
 
   return (
     <AppLayout>
       <div className="space-y-12">
-        
         {/* SEARCH MODE */}
         {searchQuery ? (
           <section className="space-y-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">
-                Search Results
-              </h1>
+              <h1 className="text-2xl sm:text-3xl font-bold">Search Results</h1>
 
               <p className="text-[var(--text-muted)] mt-1">
-                {filteredListings.length} books found for "
-                {searchQuery}"
+                {filteredListings.length} books found for "{searchQuery}"
               </p>
             </div>
 
@@ -135,16 +126,13 @@ export default function Home() {
                 </h1>
 
                 <p className="text-[var(--text-muted)] text-base leading-relaxed">
-                  Buy, sell, or donate books effortlessly
-                  with BookLoop — making education
-                  accessible one book at a time.
+                  Buy, sell, or donate books effortlessly with BookLoop — making
+                  education accessible one book at a time.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
                   <button
-                    onClick={() =>
-                      navigate("/categories")
-                    }
+                    onClick={() => navigate("/categories")}
                     className="px-5 py-3 rounded-xl bg-[var(--accent)] text-white font-medium hover:opacity-90 transition"
                   >
                     Explore Categories
@@ -168,23 +156,17 @@ export default function Home() {
                 </h2>
 
                 <button
-                  onClick={() =>
-                    navigate("/nearby-books")
-                  }
+                  onClick={() => navigate("/nearby-books")}
                   className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
                 >
-                  View More{" "}
-                  <ArrowRight size={18} />
+                  View More <ArrowRight size={18} />
                 </button>
               </div>
 
               {nearbyBooks.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {nearbyBooks.map((book) => (
-                    <BookCard
-                      key={book._id}
-                      book={book}
-                    />
+                    <BookCard key={book._id} book={book} />
                   ))}
                 </div>
               ) : (
@@ -206,13 +188,10 @@ export default function Home() {
                 </h2>
 
                 <button
-                  onClick={() =>
-                    navigate("/categories")
-                  }
+                  onClick={() => navigate("/categories")}
                   className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
                 >
-                  View All{" "}
-                  <ArrowRight size={18} />
+                  View All <ArrowRight size={18} />
                 </button>
               </div>
 
@@ -224,11 +203,7 @@ export default function Home() {
                     <div
                       key={cat.name}
                       onClick={() =>
-                        navigate(
-                          `/categories/${encodeURIComponent(
-                            cat.name
-                          )}`
-                        )
+                        navigate(`/categories/${encodeURIComponent(cat.name)}`)
                       }
                       className="group rounded-2xl p-5 bg-[var(--surface)]
                       border border-[var(--border)]
@@ -241,15 +216,10 @@ export default function Home() {
                         bg-[var(--bg)] border border-[var(--border)] mb-3
                         group-hover:border-[var(--accent)]"
                       >
-                        <Icon
-                          size={22}
-                          className="text-[var(--accent)]"
-                        />
+                        <Icon size={22} className="text-[var(--accent)]" />
                       </div>
 
-                      <h3 className="text-sm font-medium">
-                        {cat.name}
-                      </h3>
+                      <h3 className="text-sm font-medium">{cat.name}</h3>
                     </div>
                   );
                 })}
@@ -258,9 +228,7 @@ export default function Home() {
 
             {/* FREE BOOKS */}
             <section
-              onClick={() =>
-                navigate("/categories/free-books")
-              }
+              onClick={() => navigate("/categories/free-books")}
               className="rounded-3xl p-5 sm:p-8 cursor-pointer
               bg-gradient-to-r from-purple-600 to-indigo-600
               text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]
@@ -277,8 +245,7 @@ export default function Home() {
                   </div>
 
                   <p className="text-sm text-white/90 max-w-xl">
-                    Discover donated books from nearby
-                    students and readers —
+                    Discover donated books from nearby students and readers —
                     completely free and accessible.
                   </p>
                 </div>
@@ -294,16 +261,13 @@ export default function Home() {
             >
               <div className="space-y-5 max-w-3xl">
                 <h2 className="text-3xl font-bold">
-                  Join the mission to make books
-                  affordable 📖
+                  Join the mission to make books affordable 📖
                 </h2>
 
                 <p className="text-[var(--text-muted)] leading-relaxed">
-                  Millions of books remain unused while
-                  students struggle to afford them.
-                  BookLoop connects readers, learners,
-                  and sellers to create an accessible
-                  ecosystem for knowledge sharing.
+                  Millions of books remain unused while students struggle to
+                  afford them. BookLoop connects readers, learners, and sellers
+                  to create an accessible ecosystem for knowledge sharing.
                 </p>
 
                 <button

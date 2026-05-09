@@ -63,19 +63,26 @@ export default function ListingDetails() {
   }, [id]);
 
   const handleShare = async () => {
+    const shareData = {
+      title: `${listing.title} | BookLoop`,
+      text: `Check out "${listing.title}" on BookLoop ${
+        listing.type === "donate" ? "for free 📚" : `for ₹${listing.price} 📚`
+      }`,
+      url: window.location.href,
+    };
+
     try {
       if (navigator.share) {
-        await navigator.share({
-          title: listing.title,
-          text: "Check this book on BookLoop",
-          url: window.location.href,
-        });
+        await navigator.share(shareData);
+        toast.success("Book shared successfully!");
       } else {
-        await navigator.clipboard.writeText(window.location.href);
-        toast.success("Link copied!");
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success("Book link copied!");
       }
-    } catch {
-      toast.error("Failed to share");
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        toast.error("Failed to share");
+      }
     }
   };
 
