@@ -47,14 +47,16 @@ export default function Categories() {
 
   return (
     <AppLayout>
-      <div className="space-y-8">
-
+      <div className="space-y-6 sm:space-y-8">
         {/* HEADER */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-semibold">Browse Categories</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold">
+            Browse Categories
+          </h1>
 
-          <p className="text-sm text-[var(--text-muted)]">
-            Explore books across academic, fiction, competitive and specialized categories.
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Explore books across academic, fiction, competitive and specialized
+            categories.
           </p>
         </div>
 
@@ -69,7 +71,7 @@ export default function Categories() {
                 onClick={() =>
                   navigate(`/categories/${encodeURIComponent(cat.name)}`)
                 }
-                className="group p-6 rounded-2xl bg-[var(--surface)] 
+                className="group p-5 sm:p-6 rounded-2xl bg-[var(--surface)] 
                 border border-[var(--border)]
                 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
                 hover:shadow-lg hover:scale-[1.02]
@@ -85,12 +87,12 @@ export default function Categories() {
                 </div>
 
                 {/* TITLE */}
-                <h2 className="text-lg font-semibold mb-2">
+                <h2 className="text-base sm:text-lg font-semibold mb-2">
                   {cat.name}
                 </h2>
 
                 {/* DESCRIPTION */}
-                <p className="text-sm text-[var(--text-muted)] mb-4 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--text-muted)] mb-4 leading-relaxed">
                   {cat.desc}
                 </p>
 
@@ -105,16 +107,17 @@ export default function Categories() {
 
         {/* FUTURE NOTE */}
         <div
-          className="rounded-2xl p-6 bg-[var(--surface)] border border-[var(--border)] 
+          className="rounded-2xl p-5 sm:p-6 bg-[var(--surface)] border border-[var(--border)] 
           shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
         >
-          <h3 className="text-lg font-semibold mb-2">
+          <h3 className="text-base sm:text-lg font-semibold mb-2">
             More categories coming soon 🚀
           </h3>
 
-          <p className="text-sm text-[var(--text-muted)]">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
             We’re expanding BookLoop to include more specialized categories,
-            advanced filters, and location-based sorting for smarter book discovery.
+            advanced filters, and location-based sorting for smarter book
+            discovery.
           </p>
         </div>
       </div>

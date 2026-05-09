@@ -17,12 +17,18 @@ export default function ProfileCompletionPrompt() {
   return (
     <div className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
       <div className="flex items-start gap-3">
-        <AlertCircle size={18} className="mt-0.5 text-[var(--accent)]" />
+        <AlertCircle
+          size={18}
+          className="mt-0.5 shrink-0 text-[var(--accent)]"
+        />
 
         <div>
-          <p className="text-sm font-medium">Complete your profile</p>
-          <p className="text-xs text-[var(--text-muted)]">
-            Add your phone and location to help buyers contact you and see accurate distances.
+          <p className="text-sm sm:text-base font-medium">
+            Complete your profile
+          </p>
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Add your phone and location to help buyers contact you and see
+            accurate distances.
           </p>
         </div>
       </div>
@@ -30,7 +36,7 @@ export default function ProfileCompletionPrompt() {
       <button
         type="button"
         onClick={() => navigate("/edit-profile")}
-        className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90"
+        className="w-full sm:w-auto px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90"
       >
         Edit profile
       </button>

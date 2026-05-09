@@ -57,7 +57,7 @@ export default function NearbyBooks() {
               <ArrowLeft size={18} />
             </button>
 
-            <h1 className="text-2xl font-semibold">Nearby Books</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold">Nearby Books</h1>
           </div>
         </div>
 
@@ -72,7 +72,7 @@ export default function NearbyBooks() {
           />
         ) : (
           /* GRID */
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {sortedBooks.map((book) => (
               <BookCard key={book._id} book={book} />
             ))}

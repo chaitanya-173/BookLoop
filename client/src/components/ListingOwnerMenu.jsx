@@ -18,7 +18,7 @@ export default function ListingOwnerMenu({ book }) {
     e.stopPropagation();
 
     const confirmed = window.confirm(
-      "Are you sure you want to delete this listing?"
+      "Are you sure you want to delete this listing?",
     );
 
     if (!confirmed) return;
@@ -42,10 +42,10 @@ export default function ListingOwnerMenu({ book }) {
       toast.success(
         book.status === "sold"
           ? "Listing marked as available"
-          : "Listing marked as sold"
+          : "Listing marked as sold",
       );
 
-      window.location.reload();
+      navigate(0);
     } catch {
       toast.error("Status update failed");
     }
@@ -65,7 +65,7 @@ export default function ListingOwnerMenu({ book }) {
 
       {menuOpen && (
         <div
-          className="absolute right-0 mt-2 w-44 rounded-xl 
+          className="absolute right-0 mt-2 w-44 sm:w-48 rounded-xl 
           bg-[var(--surface)] border border-[var(--border)] 
           shadow-lg overflow-hidden z-50"
         >
@@ -74,7 +74,7 @@ export default function ListingOwnerMenu({ book }) {
               e.stopPropagation();
               navigate(`/edit-listing/${book._id}`);
             }}
-            className="w-full flex items-center gap-2 px-4 py-3 text-sm hover:bg-[var(--bg)]"
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-left hover:bg-[var(--bg)]"
           >
             <Pencil size={14} />
             Edit Listing
@@ -82,7 +82,7 @@ export default function ListingOwnerMenu({ book }) {
 
           <button
             onClick={handleStatusToggle}
-            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-yellow-500 hover:bg-yellow-500/10"
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-left text-yellow-500 hover:bg-yellow-500/10"
           >
             {book.status === "sold" ? (
               <>
@@ -99,7 +99,7 @@ export default function ListingOwnerMenu({ book }) {
 
           <button
             onClick={handleDelete}
-            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-500/10"
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-left text-red-500 hover:bg-red-500/10"
           >
             <Trash2 size={14} />
             Delete

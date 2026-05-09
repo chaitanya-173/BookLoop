@@ -281,12 +281,14 @@ export default function ListingDetails() {
                 {listing.category}
               </span>
 
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-sm text-[var(--text-muted)] font-medium">
                 Condition: {listing.condition}
               </p>
 
               {listing.author && (
-                <p className="text-sm">Author: {listing.author}</p>
+                <p className="text-sm text-[var(--text-muted)]">
+                  Author: {listing.author}
+                </p>
               )}
 
               <div className="border-t border-[var(--border)]"></div>
@@ -371,6 +373,24 @@ export default function ListingDetails() {
               </div>
             </div>
           </div>
+
+          {isOwner && listing.status !== "sold" && (
+            <div
+              className="rounded-2xl border border-[var(--border)] p-4
+    bg-[var(--surface)] space-y-2 max-w-2xl w-full
+    shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+            >
+              <h3 className="text-sm font-semibold text-[var(--accent)]">
+                Manage your listing
+              </h3>
+
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed">
+                If this book has been sold or is no longer available, please
+                mark it as unavailable or delete it to keep BookLoop accurate
+                for other users.
+              </p>
+            </div>
+          )}
 
           {/* LOCATION */}
           <div

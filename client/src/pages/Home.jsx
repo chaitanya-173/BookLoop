@@ -96,7 +96,7 @@ export default function Home() {
         {searchQuery ? (
           <section className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold">
+              <h1 className="text-2xl sm:text-3xl font-bold">
                 Search Results
               </h1>
 
@@ -107,7 +107,7 @@ export default function Home() {
             </div>
 
             {filteredListings.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {filteredListings.map((book) => (
                   <BookCard key={book._id} book={book} />
                 ))}
@@ -126,11 +126,11 @@ export default function Home() {
           <>
             {/* HERO */}
             <section
-              className="rounded-3xl p-8 bg-[var(--surface)] border border-[var(--border)]
+              className="rounded-3xl p-5 sm:p-8 bg-[var(--surface)] border border-[var(--border)]
               shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
             >
               <div className="max-w-3xl space-y-4">
-                <h1 className="text-4xl font-bold leading-tight">
+                <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
                   Discover affordable books near you
                 </h1>
 
@@ -140,7 +140,7 @@ export default function Home() {
                   accessible one book at a time.
                 </p>
 
-                <div className="flex gap-4 pt-2">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
                   <button
                     onClick={() =>
                       navigate("/categories")
@@ -163,7 +163,7 @@ export default function Home() {
             {/* NEARBY BOOKS */}
             <section className="space-y-5">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Your Nearby Books
                 </h2>
 
@@ -201,7 +201,7 @@ export default function Home() {
             {/* TRENDING CATEGORIES */}
             <section className="space-y-5">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Trending Categories
                 </h2>
 
@@ -261,17 +261,17 @@ export default function Home() {
               onClick={() =>
                 navigate("/categories/free-books")
               }
-              className="rounded-3xl p-8 cursor-pointer
+              className="rounded-3xl p-5 sm:p-8 cursor-pointer
               bg-gradient-to-r from-purple-600 to-indigo-600
               text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]
               hover:scale-[1.01] transition-all"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Gift size={28} />
 
-                    <h2 className="text-3xl font-bold">
+                    <h2 className="text-2xl sm:text-3xl font-bold">
                       Get Free Books
                     </h2>
                   </div>

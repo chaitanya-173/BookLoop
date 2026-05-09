@@ -27,9 +27,8 @@ export default function Login() {
   return (
     <AuthLayout type="login">
       <div className="space-y-6">
-
         {/* Heading */}
-        <h2 className="text-2xl font-semibold tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
           Sign in
         </h2>
 
@@ -45,8 +44,10 @@ export default function Login() {
         </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-5"
+        >
           {/* Identifier */}
           <div>
             <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
@@ -118,7 +119,6 @@ export default function Login() {
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
-
         </form>
       </div>
     </AuthLayout>

@@ -181,15 +181,17 @@ export default function EditProfile() {
 
   return (
     <AppLayout showSearch={false} showProfilePrompt={false}>
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] px-4 py-6">
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] px-3 sm:px-4 py-5 sm:py-6">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-6">Edit profile</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-5 sm:mb-6">
+            Edit profile
+          </h2>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-5"
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 space-y-5"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <div className="w-24 h-24 rounded-full bg-[var(--bg)] border border-[var(--border)] overflow-hidden flex items-center justify-center">
                 {imagePreview ? (
                   <img
@@ -343,11 +345,11 @@ export default function EditProfile() {
               </p>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-4 py-2 rounded-lg border border-[var(--border)] text-sm hover:bg-[var(--bg)]"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-[var(--border)] text-sm hover:bg-[var(--bg)]"
               >
                 Cancel
               </button>
@@ -355,7 +357,7 @@ export default function EditProfile() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90 transition"
+                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90 transition"
               >
                 {isSubmitting ? "Saving..." : "Save profile"}
               </button>

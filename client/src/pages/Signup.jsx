@@ -26,7 +26,7 @@ export default function Signup() {
       <div className="space-y-6">
 
         {/* Heading */}
-        <h2 className="text-2xl font-semibold tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
           Create account
         </h2>
 
@@ -42,7 +42,7 @@ export default function Signup() {
         </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-5">
 
           {/* Name */}
           <div>

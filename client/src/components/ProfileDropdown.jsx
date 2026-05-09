@@ -93,24 +93,26 @@ export default function ProfileDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 translate-x-1 w-64 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 sm:translate-x-1 w-[92vw] max-w-64 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl overflow-hidden z-50">
           {/* Top Profile Section */}
           <div className="flex flex-col items-center py-5 px-4 border-b border-[var(--border)]">
             {profileImage ? (
               <img
                 src={profileImage}
                 alt="profile"
-                className="w-20 h-20 rounded-full object-cover mb-3"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover mb-3"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-[var(--bg)] flex items-center justify-center mb-3">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--bg)] flex items-center justify-center mb-3">
                 <User size={32} />
               </div>
             )}
 
-            <p className="font-semibold text-lg">{user?.name || "Guest"}</p>
+            <p className="font-semibold text-base sm:text-lg text-center line-clamp-1">
+              {user?.name || "Guest"}
+            </p>
 
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] text-center break-all">
               {user?.email || "Not logged in"}
             </p>
           </div>
@@ -176,11 +178,11 @@ export default function ProfileDropdown() {
                 className="w-full px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-sm resize-none focus:outline-none"
               />
 
-              <div className="flex justify-end gap-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setFeedbackOpen(false)}
-                  className="px-3 py-2 rounded-lg border border-[var(--border)] text-xs hover:bg-[var(--bg)]"
+                  className="w-full sm:w-auto px-3 py-2 rounded-lg border border-[var(--border)] text-xs hover:bg-[var(--bg)]"
                 >
                   Cancel
                 </button>
@@ -188,7 +190,7 @@ export default function ProfileDropdown() {
                 <button
                   type="submit"
                   disabled={submittingFeedback}
-                  className="px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90"
+                  className="w-full sm:w-auto px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90"
                 >
                   {submittingFeedback ? "Sending..." : "Send"}
                 </button>
@@ -225,7 +227,7 @@ function MenuItem({ icon, text, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-[var(--bg)]"
+      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-[var(--bg)]"
     >
       {icon}
       {text}

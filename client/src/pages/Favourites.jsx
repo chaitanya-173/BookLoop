@@ -41,11 +41,14 @@ export default function Favourites() {
     );
   }
 
-  const sortedWishlistBooks = sortListingsByDistance(wishlistBooks, user?.location);
+  const sortedWishlistBooks = sortListingsByDistance(
+    wishlistBooks,
+    user?.location,
+  );
 
   return (
     <AppLayout>
-      <div className="p-5 space-y-6">
+      <div className="p-4 sm:p-5 space-y-6">
         {/* HEADER */}
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -56,10 +59,10 @@ export default function Favourites() {
               <ArrowLeft size={18} />
             </button>
 
-            <h1 className="text-2xl font-semibold">My Wishlist</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold">My Wishlist</h1>
           </div>
 
-          <p className="text-sm text-[var(--text-muted)] ml-7">
+          <p className="text-[var(--text-muted)] ml-7 text-xs sm:text-sm">
             {sortedWishlistBooks.length} saved books
           </p>
         </div>
@@ -75,7 +78,7 @@ export default function Favourites() {
           />
         ) : (
           /* BOOK GRID */
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {sortedWishlistBooks.map((book) => (
               <BookCard key={book._id} book={book} />
             ))}

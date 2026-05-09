@@ -28,11 +28,11 @@ export default function MyBooks() {
 
   return (
     <AppLayout>
-      <div className="p-5">
-        <h2 className="text-lg font-semibold mb-4">My Books</h2>
+      <div className="p-4 sm:p-5">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">My Books</h2>
 
         {myBooks.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {myBooks.map((book) => (
               <BookCard key={book._id} book={book} />
             ))}
