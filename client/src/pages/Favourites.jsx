@@ -54,15 +54,18 @@ export default function Favourites() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+              className="flex items-center justify-center w-9 h-9 rounded-xl
+  border border-[var(--border)] bg-[var(--surface)]
+  text-[var(--text-muted)] hover:text-[var(--text)]
+  hover:bg-[var(--bg)] transition"
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={16} />
             </button>
 
             <h1 className="text-xl sm:text-2xl font-semibold">My Wishlist</h1>
           </div>
 
-          <p className="text-[var(--text-muted)] ml-7 text-xs sm:text-sm">
+          <p className="text-[var(--text-muted)] ml-12 text-xs sm:text-sm">
             {sortedWishlistBooks.length} saved books
           </p>
         </div>

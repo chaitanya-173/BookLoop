@@ -16,6 +16,7 @@ import Favourites from "./pages/Favourites";
 import ListingDetails from "./pages/ListingDetails";
 import CategoryBooks from "./pages/CategoryBooks";
 import NearbyBooks from "./pages/NearbyBooks";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -94,6 +95,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+  
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

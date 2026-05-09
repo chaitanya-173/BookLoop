@@ -166,10 +166,13 @@ export default function ListingDetails() {
           {/* BACK BUTTON */}
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+            className="flex items-center justify-center w-9 h-9 rounded-xl
+  border border-[var(--border)] bg-[var(--surface)]
+  text-[var(--text-muted)] hover:text-[var(--text)]
+  hover:bg-[var(--bg)] transition"
           >
-            <ArrowLeft size={16} /> Back
-          </button>
+            <ArrowLeft size={16} />
+          </button> 
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* LEFT IMAGE */}

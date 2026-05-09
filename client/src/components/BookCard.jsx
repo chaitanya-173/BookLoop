@@ -13,6 +13,13 @@ export default function BookCard({ book }) {
   const distanceMeters = getDistanceMeters(user?.location, book.user?.location);
   const distanceLabel = formatDistance(distanceMeters);
 
+  const isOwner =
+    user &&
+    book.user &&
+    (book.user._id === user._id || book.user._id === user.id);
+
+  const canViewDetails = book.status !== "sold" || isOwner;
+
   const handleWishlist = async (e) => {
     e.stopPropagation();
 
@@ -33,12 +40,21 @@ export default function BookCard({ book }) {
 
   return (
     <div
-      onClick={() => navigate(`/listing/${book._id}`)}
+      onClick={() => {
+        if (!canViewDetails) {
+          toast.error("This book is no longer available");
+          return;
+        }
+
+        navigate(`/listing/${book._id}`);
+      }}
       className={`bg-[var(--surface)] border border-[var(--border)] rounded-2xl
       overflow-hidden shadow transition-all duration-300 group
       ${
         book.status === "sold"
-          ? "grayscale opacity-70 cursor-pointer"
+          ? isOwner
+            ? "grayscale opacity-70 cursor-pointer"
+            : "grayscale opacity-70 cursor-not-allowed"
           : "hover:shadow-lg hover:scale-[1.03] cursor-pointer"
       }`}
     >
@@ -143,6 +159,12 @@ export default function BookCard({ book }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
+
+              if (!canViewDetails) {
+                toast.error("This book is no longer available");
+                return;
+              }
+
               navigate(`/listing/${book._id}`);
             }}
             className="text-[11px] sm:text-sm text-[var(--accent)] font-medium hover:underline"

@@ -55,7 +55,10 @@ export default function CategoryBooks() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+              className="flex items-center justify-center w-9 h-9 rounded-xl
+  border border-[var(--border)] bg-[var(--surface)]
+  text-[var(--text-muted)] hover:text-[var(--text)]
+  hover:bg-[var(--bg)] transition"
             >
               <ArrowLeft size={16} />
             </button>
@@ -65,7 +68,7 @@ export default function CategoryBooks() {
             </h1>
           </div>
 
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] ml-7">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] ml-12">
             {filteredBooks.length} books found
           </p>
         </div>
