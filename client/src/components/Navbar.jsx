@@ -1,13 +1,16 @@
 import { NavLink, Link } from "react-router-dom";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { Sun, Moon, Menu, X, Search } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
+import logoLight from "../assets/BookLoop_light_logo.png";
+import logoDark from "../assets/BookLoop_dark_logo.png";
 
 export default function Navbar({ showSearch = true }) {
   const { dark, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
 
   const navClass = ({ isActive }) =>
     isActive
@@ -26,12 +29,12 @@ export default function Navbar({ showSearch = true }) {
           {/* LEFT */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
             {/* MOBILE LOGO ONLY */}
-            <Link
-              to="/"
-              className="text-lg sm:text-base md:text-lg font-bold text-[var(--primary)] whitespace-nowrap"
-            >
-              <span className="sm:hidden">📚</span>
-              <span className="hidden sm:inline">📚 BookLoop</span>
+            <Link to="/" className="shrink-0">
+              <img
+                src={dark ? logoDark : logoLight}
+                alt="BookLoop"
+                className="h-8 sm:h-10 w-auto"
+              />
             </Link>
 
             {/* DESKTOP NAV */}
@@ -52,9 +55,16 @@ export default function Navbar({ showSearch = true }) {
 
           {/* SEARCH */}
           {showSearch && (
-            <div className="flex-1 min-w-0 px-1 sm:px-2">
-              <div className="max-w-md mx-auto">
-                <SearchBar />
+            <div className="hidden md:flex flex-1 justify-end px-2">
+              <div
+                className={`origin-right transition-all duration-300 ease-in-out ${
+                  searchExpanded ? "w-[420px]" : "w-[310px]"
+                }`}
+              >
+                <SearchBar
+                  onFocus={() => setSearchExpanded(true)}
+                  onBlur={() => setSearchExpanded(false)}
+                />
               </div>
             </div>
           )}
@@ -69,6 +79,11 @@ export default function Navbar({ showSearch = true }) {
                 {dark ? <Sun size={18} /> : <Moon size={18} />}
               </button>
             </div>
+
+            {/* MOBILE SEARCH ICON */}
+            <button className="md:hidden p-2 rounded-lg hover:bg-[var(--surface)] transition">
+              <Search size={20} />
+            </button>
 
             <ProfileDropdown />
 

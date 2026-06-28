@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 
-export default function SearchBar() {
+export default function SearchBar({ onFocus, onBlur }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -40,12 +40,14 @@ export default function SearchBar() {
       />
 
       <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by title, author, or category..."
-        className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
-      />
+  type="text"
+  value={query}
+  onChange={(e) => setQuery(e.target.value)}
+  onFocus={onFocus}
+  onBlur={onBlur}
+  placeholder="Search by title, author, or category..."
+  className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
+/>
 
       {query && (
         <button
