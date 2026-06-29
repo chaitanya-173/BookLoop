@@ -40,14 +40,14 @@ export default function SearchBar({ onFocus, onBlur }) {
       />
 
       <input
-  type="text"
-  value={query}
-  onChange={(e) => setQuery(e.target.value)}
-  onFocus={onFocus}
-  onBlur={onBlur}
-  placeholder="Search by title, author, or category..."
-  className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
-/>
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        placeholder="Search books..."
+        className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
+      />
 
       {query && (
         <button

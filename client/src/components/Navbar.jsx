@@ -3,7 +3,7 @@ import { Sun, Moon, Menu, X, Search } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from "./SearchBar";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import logoLight from "../assets/BookLoop_light_logo.png";
 import logoDark from "../assets/BookLoop_dark_logo.png";
 
@@ -11,6 +11,27 @@ export default function Navbar({ showSearch = true }) {
   const { dark, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const mobileSearchRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        mobileSearchOpen &&
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(e.target)
+      ) {
+        setMobileSearchOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileSearchOpen]);
 
   const navClass = ({ isActive }) =>
     isActive
@@ -25,7 +46,7 @@ export default function Navbar({ showSearch = true }) {
         px-3 sm:px-4 md:px-6 py-3 transition-all duration-300"
       >
         {/* TOP ROW */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="relative flex items-center justify-between gap-3">
           {/* LEFT */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
             {/* MOBILE LOGO ONLY */}
@@ -38,7 +59,7 @@ export default function Navbar({ showSearch = true }) {
             </Link>
 
             {/* DESKTOP NAV */}
-            <div className="hidden md:flex items-center gap-5">
+            <div className="hidden lg:flex items-center gap-5">
               <NavLink to="/" end className={navClass}>
                 Home
               </NavLink>
@@ -55,23 +76,26 @@ export default function Navbar({ showSearch = true }) {
 
           {/* SEARCH */}
           {showSearch && (
-            <div className="hidden md:flex flex-1 justify-end px-2">
-              <div
-                className={`origin-right transition-all duration-300 ease-in-out ${
-                  searchExpanded ? "w-[420px]" : "w-[310px]"
-                }`}
-              >
-                <SearchBar
-                  onFocus={() => setSearchExpanded(true)}
-                  onBlur={() => setSearchExpanded(false)}
-                />
+            <div className="hidden lg:flex flex-1 justify-end px-2">
+              <div className="relative w-[200px]">
+                <div
+                  className={`absolute right-0 top-1/2 -translate-y-1/2 z-50
+        transition-all duration-300 ease-in-out ${
+          searchExpanded ? "w-[300px]" : "w-[200px]"
+        }`}
+                >
+                  <SearchBar
+                    onFocus={() => setSearchExpanded(true)}
+                    onBlur={() => setSearchExpanded(false)}
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {/* RIGHT */}
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-lg hover:bg-[var(--surface)] transition"
@@ -80,10 +104,21 @@ export default function Navbar({ showSearch = true }) {
               </button>
             </div>
 
-            {/* MOBILE SEARCH ICON */}
-            <button className="md:hidden p-2 rounded-lg hover:bg-[var(--surface)] transition">
-              <Search size={20} />
-            </button>
+            {/* MOBILE SEARCH */}
+            <div ref={mobileSearchRef} className="lg:hidden relative">
+              {mobileSearchOpen ? (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[65vw] max-w-[280px] min-w-[220px] z-50">
+                  <SearchBar />
+                </div>
+              ) : (
+                <button
+                  onClick={() => setMobileSearchOpen(true)}
+                  className="p-2 rounded-lg hover:bg-[var(--surface)] transition"
+                >
+                  <Search size={20} />
+                </button>
+              )}
+            </div>
 
             <ProfileDropdown />
 
@@ -98,8 +133,11 @@ export default function Navbar({ showSearch = true }) {
 
             {/* MOBILE MENU BUTTON */}
             <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden p-2 rounded-lg hover:bg-[var(--surface)] transition"
+              onClick={() => {
+                setMobileSearchOpen(false);
+                setMobileMenuOpen((prev) => !prev);
+              }}
+              className="lg:hidden p-2 rounded-lg hover:bg-[var(--surface)] transition"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -108,7 +146,7 @@ export default function Navbar({ showSearch = true }) {
 
         {/* MOBILE MENU */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-[var(--border)] flex flex-col gap-2">
+          <div className="lg:hidden mt-4 pt-4 border-t border-[var(--border)] flex flex-col gap-2">
             <NavLink
               to="/"
               end
