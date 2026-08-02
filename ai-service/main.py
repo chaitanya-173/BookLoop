@@ -25,7 +25,7 @@ app.add_middleware(
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX = os.getenv("PINECONE_INDEX")
-NAMESPACE = ""  # default namespace
+NAMESPACE = "__default__"  # default namespace (Pinecone API 2025-04+ requires this explicit value)
 
 if not PINECONE_API_KEY or not PINECONE_INDEX:
     raise RuntimeError(

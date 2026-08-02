@@ -17,7 +17,6 @@ import {
   Laptop,
   Gift,
   SearchX,
-  Sparkles,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -39,33 +38,27 @@ export default function Home() {
   const rawSearchQuery = searchParams.get("search") || "";
   const searchQuery = rawSearchQuery.toLowerCase();
 
-  const [smartMode, setSmartMode] = useState(false);
-  const [smartResults, setSmartResults] = useState([]);
-  const [smartLoading, setSmartLoading] = useState(false);
-
-  // Reset smart mode whenever the search query itself changes
-  useEffect(() => {
-    setSmartMode(false);
-    setSmartResults([]);
-  }, [rawSearchQuery]);
+  // null = semantic results not ready/available yet -> fall back to keyword results.
+  // Once semantic search resolves with matches, we silently upgrade to those (better ranked),
+  // with zero visible toggle or loading state - same search box, just smarter results.
+  const [smartResults, setSmartResults] = useState(null);
 
   useEffect(() => {
-    if (!smartMode || !rawSearchQuery.trim()) return;
+    setSmartResults(null);
+
+    if (!rawSearchQuery.trim()) return;
 
     let cancelled = false;
 
     const runSmartSearch = async () => {
       try {
-        setSmartLoading(true);
         const res = await semanticSearchListings(rawSearchQuery);
 
-        if (!cancelled && res.data?.success) {
+        if (!cancelled && res.data?.success && res.data.data?.length > 0) {
           setSmartResults(res.data.data);
         }
       } catch {
-        if (!cancelled) toast.error("Smart search failed, showing normal results");
-      } finally {
-        if (!cancelled) setSmartLoading(false);
+        // Silent fallback - keyword results are already showing, no need to alert the user
       }
     };
 
@@ -74,7 +67,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [smartMode, rawSearchQuery]);
+  }, [rawSearchQuery]);
 
   if (loading) {
     return (
@@ -130,52 +123,18 @@ export default function Home() {
         {/* SEARCH MODE */}
         {searchQuery ? (
           <section className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold">Search Results</h1>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold">Search Results</h1>
 
-                <p className="text-[var(--text-muted)] mt-1">
-                  {smartMode
-                    ? `${smartResults.length} smart matches for "${rawSearchQuery}"`
-                    : `${filteredListings.length} books found for "${rawSearchQuery}"`}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setSmartMode((prev) => !prev)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-medium text-sm transition shrink-0 w-fit
-                  ${
-                    smartMode
-                      ? "bg-[var(--accent)] text-white border-[var(--accent)]"
-                      : "border-[var(--border)] hover:bg-[var(--surface)]"
-                  }`}
-              >
-                <Sparkles size={16} />
-                {smartMode ? "Smart Search: On" : "Try Smart Search"}
-              </button>
+              <p className="text-[var(--text-muted)] mt-1">
+                {(smartResults ?? filteredListings).length} books found for "
+                {rawSearchQuery}"
+              </p>
             </div>
 
-            {smartMode && smartLoading ? (
-              <BookGridSkeleton />
-            ) : smartMode ? (
-              smartResults.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {smartResults.map((book) => (
-                    <BookCard key={book._id} book={book} />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  icon={SearchX}
-                  title="No smart matches found"
-                  message="Try describing what you're looking for differently."
-                  actionLabel="Clear search"
-                  onAction={() => navigate("/")}
-                />
-              )
-            ) : filteredListings.length > 0 ? (
+            {(smartResults ?? filteredListings).length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                {filteredListings.map((book) => (
+                {(smartResults ?? filteredListings).map((book) => (
                   <BookCard key={book._id} book={book} />
                 ))}
               </div>

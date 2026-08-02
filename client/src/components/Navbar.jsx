@@ -49,14 +49,16 @@ export default function Navbar({ showSearch = true }) {
         <div className="relative flex items-center justify-between gap-3">
           {/* LEFT */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            {/* MOBILE LOGO ONLY */}
-            <Link to="/" className="shrink-0">
-              <img
-                src={dark ? logoDark : logoLight}
-                alt="BookLoop"
-                className="h-8 sm:h-10 w-auto"
-              />
-            </Link>
+            {/* MOBILE LOGO ONLY - hidden while mobile search is expanded, so it never overlaps */}
+            {!mobileSearchOpen && (
+              <Link to="/" className="shrink-0">
+                <img
+                  src={dark ? logoDark : logoLight}
+                  alt="BookLoop"
+                  className="h-8 sm:h-10 w-auto"
+                />
+              </Link>
+            )}
 
             {/* DESKTOP NAV */}
             <div className="hidden lg:flex items-center gap-5">
@@ -76,7 +78,7 @@ export default function Navbar({ showSearch = true }) {
 
           {/* SEARCH */}
           {showSearch && (
-            <div className="hidden lg:flex flex-1 justify-end px-2">
+            <div className="hidden sm:flex flex-1 justify-end px-2">
               <div className="relative w-[200px]">
                 <div
                   className={`absolute right-0 top-1/2 -translate-y-1/2 z-50
@@ -105,7 +107,7 @@ export default function Navbar({ showSearch = true }) {
             </div>
 
             {/* MOBILE SEARCH */}
-            <div ref={mobileSearchRef} className="lg:hidden relative">
+            <div ref={mobileSearchRef} className="sm:hidden relative">
               {mobileSearchOpen ? (
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[65vw] max-w-[280px] min-w-[220px] z-50">
                   <SearchBar />
@@ -143,6 +145,7 @@ export default function Navbar({ showSearch = true }) {
             </button>
           </div>
         </div>
+
 
         {/* MOBILE MENU */}
         {mobileMenuOpen && (
