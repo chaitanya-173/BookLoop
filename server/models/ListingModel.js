@@ -48,6 +48,10 @@ const listingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    embedding: {
+      type: [Number],
+      select: false, // don't send this heavy array in normal API responses
+    },
   },
   { timestamps: true },
 );

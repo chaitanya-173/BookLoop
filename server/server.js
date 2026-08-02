@@ -13,10 +13,24 @@ dotenv.config();
 
 const app = express();
 
+// Needed so secure cookies work correctly behind a reverse proxy (e.g. Render, Railway)
+app.set("trust proxy", 1);
+
 // Middlewares
+const allowedOrigins = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (e.g. curl, Postman) with no origin header
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );

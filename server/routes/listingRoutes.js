@@ -8,15 +8,16 @@ import {
   toggleWishlist,
   getWishlist,
   toggleListingStatus,
+  semanticSearchListings,
 } from "../controllers/listingController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/upload.js";
 
 const router = express.Router();
 
-// router.post("/", protect, createListing); // TEMP
 router.post("/", protect, upload.array("images", 5), createListing); // Create listing
 router.get("/", getListings); // Get all listings
+router.get("/search/semantic", semanticSearchListings); // Semantic search
 router.get("/wishlist/all", protect, getWishlist); // Get wishlist
 router.post("/wishlist/:id", protect, toggleWishlist); // Add/remove wishlist
 router.get("/:id", getListingById); // Get single listing

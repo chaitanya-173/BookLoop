@@ -18,6 +18,13 @@ export const getListings = async (search = "") => {
   return await api.get(`/api/listings?search=${encodeURIComponent(search)}`);
 };;
 
+// Semantic (meaning-based) search, powered by the AI service + vector search
+export const semanticSearchListings = async (query) => {
+  return await api.get(
+    `/api/listings/search/semantic?q=${encodeURIComponent(query)}`,
+  );
+};
+
 // Get single listing
 export const getListingById = async (id) => {
   return await api.get(`/api/listings/${id}`);

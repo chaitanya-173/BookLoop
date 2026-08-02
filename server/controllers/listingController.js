@@ -1,6 +1,11 @@
 import ListingModel from "../models/ListingModel.js";
 import UserModel from "../models/UserModel.js";
 import { successResponse, errorResponse } from "../utils/response.js";
+import {
+  embedListing,
+  removeListingEmbedding,
+  semanticSearch,
+} from "../services/aiService.js";
 
 // CREATE LISTING
 export const createListing = async (req, res) => {
@@ -23,6 +28,9 @@ export const createListing = async (req, res) => {
       user: req.user?._id,
     });
 
+    // Fire-and-forget: embed this listing in the vector index for semantic search
+    embedListing(listing);
+
     return successResponse(res, "Listing created successfully", listing);
   } catch (error) {
     return errorResponse(res, error.message, 500);
@@ -30,18 +38,6 @@ export const createListing = async (req, res) => {
 };
 
 // GET ALL LISTINGS
-// export const getListings = async (req, res) => {
-//   try {
-//     const listings = await ListingModel.find()
-//       .sort({ createdAt: -1 })
-//       .populate("user", "name");
-
-//     return successResponse(res, "Listings fetched", listings);
-//   } catch (error) {
-//     return errorResponse(res, error.message, 500);
-//   }
-// };
-
 export const getListings = async (req, res) => {
   try {
     const { search = "" } = req.query;
@@ -61,6 +57,36 @@ export const getListings = async (req, res) => {
       .populate("user", "name phone location");
 
     return successResponse(res, "Listings fetched", listings);
+  } catch (error) {
+    return errorResponse(res, error.message, 500);
+  }
+};
+
+// SEMANTIC SEARCH
+export const semanticSearchListings = async (req, res) => {
+  try {
+    const { q = "" } = req.query;
+
+    if (!q.trim()) {
+      return successResponse(res, "Empty query", []);
+    }
+
+    const matchedIds = await semanticSearch(q, 10);
+
+    if (matchedIds.length === 0) {
+      return successResponse(res, "No semantic matches found", []);
+    }
+
+    const listings = await ListingModel.find({
+      _id: { $in: matchedIds },
+    }).populate("user", "name phone location");
+
+    // Preserve Pinecone's relevance ranking order
+    const ordered = matchedIds
+      .map((id) => listings.find((l) => l._id.toString() === id))
+      .filter(Boolean);
+
+    return successResponse(res, "Semantic search results", ordered);
   } catch (error) {
     return errorResponse(res, error.message, 500);
   }
@@ -102,6 +128,9 @@ export const deleteListing = async (req, res) => {
     // Remove from all wishlists
     await UserModel.updateMany({}, { $pull: { wishlist: listing._id } });
 
+    // Remove its vector from the semantic search index
+    removeListingEmbedding(listing._id.toString());
+
     return successResponse(res, "Listing deleted");
   } catch (error) {
     return errorResponse(res, error.message, 500);
@@ -140,6 +169,9 @@ export const updateListing = async (req, res) => {
     }
 
     await listing.save();
+
+    // Re-embed with updated text so semantic search stays in sync
+    embedListing(listing);
 
     return successResponse(res, "Listing updated successfully", listing);
   } catch (error) {
