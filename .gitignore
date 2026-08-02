@@ -1,20 +1,35 @@
-# Node modules
 node_modules/
 client/node_modules/
 server/node_modules/
 
-# Env files
+ai-service/venv/
+
 .env
 client/.env
 server/.env
+ai-service/.env
 
-# Build output
+__pycache__/
+*.pyc
+
+dist/
 client/dist/
 server/dist/
+dist-ssr/
 
-# Logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# System files
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
 .DS_Store
 Thumbs.db
