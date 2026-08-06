@@ -14,6 +14,8 @@ import {
   Gift,
   ShoppingBag,
   Search as SearchIcon,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import { useTheme } from "../context/ThemeContext";
@@ -113,11 +115,11 @@ function GlowSpot({ className }) {
 }
 
 export default function Landing() {
-  const { dark } = useTheme();
+  const { dark, toggleTheme } = useTheme();
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)] font-sans">
-      <LandingNav dark={dark} />
+      <LandingNav dark={dark} toggleTheme={toggleTheme} />
       <Hero dark={dark} />
       <TrustBar />
       <FeaturesSection />
@@ -135,7 +137,7 @@ export default function Landing() {
 
 /* ============================== NAV ============================== */
 
-function LandingNav({ dark }) {
+function LandingNav({ dark, toggleTheme }) {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-5">
@@ -149,6 +151,15 @@ function LandingNav({ dark }) {
           </Link>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+              title={dark ? "Light mode" : "Dark mode"}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text)] transition"
+            >
+              {dark ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
             <Link
               to="/login"
               className="hidden sm:inline-block text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text)] transition"
