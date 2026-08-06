@@ -144,7 +144,7 @@ export default function Home() {
                 title="No matching books"
                 message="Try a different title, author, or category."
                 actionLabel="Clear search"
-                onAction={() => navigate("/")}
+                onAction={() => navigate("/home")}
               />
             )}
           </section>

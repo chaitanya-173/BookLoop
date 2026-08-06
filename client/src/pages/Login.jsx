@@ -21,7 +21,7 @@ export default function Login() {
       identifier: data.identifier,
       password: data.password,
     });
-    if (res.ok) navigate("/");
+    if (res.ok) navigate("/home");
   };
 
   return (

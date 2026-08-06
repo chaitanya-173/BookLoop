@@ -66,3 +66,88 @@
   --border: #1E293B;
 } 
 */ 
+/* ===================================================================
+   Landing page — signature effects (additive only, no existing rules touched)
+   =================================================================== */
+
+@keyframes lp-aurora-drift {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) scale(1); }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.08); }
+}
+
+@keyframes lp-blob-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  33% { transform: translate3d(2%, -4%, 0) rotate(4deg); }
+  66% { transform: translate3d(-3%, 3%, 0) rotate(-3deg); }
+}
+
+@keyframes lp-grid-pan {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
+@keyframes lp-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes lp-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.lp-aurora {
+  position: absolute;
+  inset: -20%;
+  filter: blur(70px);
+  animation: lp-aurora-drift 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.lp-blob {
+  animation: lp-blob-float 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+.lp-grid-bg {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: lp-grid-pan 14s linear infinite;
+  opacity: 0.25;
+}
+
+.lp-marquee-track {
+  animation: lp-marquee 32s linear infinite;
+}
+
+.lp-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.lp-shimmer-text {
+  background-size: 200% auto;
+  animation: lp-shimmer 6s linear infinite;
+}
+
+.lp-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.lp-glass {
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-aurora, .lp-blob, .lp-grid-bg, .lp-marquee-track, .lp-shimmer-text {
+    animation: none !important;
+  }
+}

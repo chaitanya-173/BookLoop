@@ -18,14 +18,14 @@ export default function SearchBar({ onFocus, onBlur }) {
       const trimmed = query.trim();
 
       // Only search from allowed browsing pages
-      const allowedPaths = ["/", "/categories", "/my-books", "/favourites"];
+      const allowedPaths = ["/home", "/categories", "/my-books", "/favourites"];
 
       if (!allowedPaths.includes(location.pathname)) return;
 
       if (trimmed) {
-        navigate(`/?search=${encodeURIComponent(trimmed)}`);
-      } else if (location.pathname === "/") {
-        navigate("/");
+        navigate(`/home?search=${encodeURIComponent(trimmed)}`);
+      } else if (location.pathname === "/home") {
+        navigate("/home");
       }
     }, 400);
 
@@ -53,7 +53,7 @@ export default function SearchBar({ onFocus, onBlur }) {
         <button
           onClick={() => {
             setQuery("");
-            navigate("/");
+            navigate("/home");
           }}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] transition"
         >

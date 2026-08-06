@@ -51,7 +51,7 @@ export default function Navbar({ showSearch = true }) {
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
             {/* MOBILE LOGO ONLY - hidden while mobile search is expanded, so it never overlaps */}
             {!mobileSearchOpen && (
-              <Link to="/" className="shrink-0">
+              <Link to="/home" className="shrink-0">
                 <img
                   src={dark ? logoDark : logoLight}
                   alt="BookLoop"
@@ -62,7 +62,7 @@ export default function Navbar({ showSearch = true }) {
 
             {/* DESKTOP NAV */}
             <div className="hidden lg:flex items-center gap-5">
-              <NavLink to="/" end className={navClass}>
+              <NavLink to="/home" className={navClass}>
                 Home
               </NavLink>
 
@@ -151,8 +151,7 @@ export default function Navbar({ showSearch = true }) {
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 pt-4 border-t border-[var(--border)] flex flex-col gap-2">
             <NavLink
-              to="/"
-              end
+              to="/home"
               className={navClass}
               onClick={() => setMobileMenuOpen(false)}
             >

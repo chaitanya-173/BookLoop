@@ -4,10 +4,10 @@ import { Toaster } from "react-hot-toast";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Landing from "./pages/Landing";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Placeholder pages (baad me replace karenge)
 import MyBooks from "./pages/MyBooks";
 import Sell from "./pages/Sell";
 import Categories from "./pages/Categories";
@@ -25,7 +25,8 @@ export default function App() {
 
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 

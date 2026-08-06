@@ -18,7 +18,7 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     const res = await signup(data);
-    if (res.ok) navigate("/");
+    if (res.ok) navigate("/home");
   };
 
   return (

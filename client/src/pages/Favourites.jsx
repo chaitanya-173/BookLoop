@@ -77,7 +77,7 @@ export default function Favourites() {
             title="Your wishlist is empty"
             message="Save books you love and revisit them anytime."
             actionLabel="Browse books"
-            onAction={() => navigate("/")}
+            onAction={() => navigate("/home")}
           />
         ) : (
           /* BOOK GRID */

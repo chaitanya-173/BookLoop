@@ -138,7 +138,7 @@ export default function ListingDetails() {
           title="Listing not found"
           message="This book may have been deleted or is no longer available."
           actionLabel="Browse books"
-          onAction={() => navigate("/")}
+          onAction={() => navigate("/home")}
         />
       </AppLayout>
     );
