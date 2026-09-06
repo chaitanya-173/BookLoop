@@ -1,110 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-
-const categories = [
-  {
-    name: "School",
-    options: [
-      "Class 12",
-      "Class 11",
-      "Class 10",
-      "Class 9",
-      "Class 1-8",
-      "Others",
-    ],
-  },
-  {
-    name: "College / University",
-    options: [
-      "B.A",
-      "B.Com",
-      "B.Sc",
-      "B.Tech",
-      "BCA",
-      "BBA",
-      "LLB",
-      "MBBS",
-      "M.A",
-      "M.Com",
-      "M.Sc",
-      "M.Tech",
-      "MCA",
-      "MBA",
-      "MD/MS",
-      "LLM",
-      "Certificate",
-      "Diploma",
-      "MPhil/PhD",
-      "Other",
-    ],
-  },
-  {
-    name: "Entrance / Competitive",
-    options: [
-      "IIT JEE",
-      "NEET",
-      "UPSC",
-      "SSC",
-      "GATE",
-      "NDA",
-      "CAT",
-      "CUET",
-      "BITSAT",
-      "CLAT",
-      "State PCS",
-      "IELTS/TOEFL",
-      "Other",
-    ],
-  },
-  {
-    name: "Fiction",
-    options: [
-      "Novels",
-      "Manga",
-      "Children Books",
-      "Picture Books",
-      "Romance",
-      "Fantasy",
-      "Science Fiction",
-      "Mystery",
-      "Horror",
-      "Thriller",
-      "Action & Adventure",
-      "Young Adult",
-      "Historical Fiction",
-    ],
-  },
-  {
-    name: "Non-fiction",
-    options: [
-      "Self-help",
-      "Biographies",
-      "Business & Finance",
-      "Health",
-      "History & Humanities",
-      "Language Learning",
-      "Lifestyle",
-      "Cooking Food & Wine",
-      "Music",
-      "Personal & Social Issues",
-      "Religion",
-      "Sports",
-      "Travel",
-      "Dictionary",
-      "Encyclopedia",
-    ],
-  },
-  {
-    name: "Others",
-    options: [
-      "Agriculture",
-      "Architecture",
-      "Art & Photography",
-      "Computer Science",
-      "Other",
-    ],
-  },
-];
+import { CATEGORIES } from "../constants/categories";
 
 export default function CategoryDropdown({ onSelect, selectedCategory = "" }) {
   const [open, setOpen] = useState(false);
@@ -141,7 +37,7 @@ flex justify-between items-center cursor-pointer gap-2"
           bg-[var(--surface)] border border-[var(--border)] 
           shadow-[0_10px_25px_rgba(0,0,0,0.2)] overflow-y-auto"
         >
-          {categories.map((cat, index) => (
+          {CATEGORIES.map((cat, index) => (
             <div key={index}>
               <button
                 onClick={() => setActive(active === index ? null : index)}

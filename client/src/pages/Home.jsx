@@ -8,26 +8,14 @@ import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
 import { sortListingsByDistance } from "../utils/listingSort";
 import { semanticSearchListings } from "../services/listingService";
+import { CATEGORIES } from "../constants/categories";
 import {
   ArrowRight,
-  GraduationCap,
   BookOpen,
-  Trophy,
-  Library,
-  Laptop,
   Gift,
   SearchX,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-
-const trendingCategories = [
-  { name: "School", icon: GraduationCap },
-  { name: "College / University", icon: Library },
-  { name: "Entrance / Competitive", icon: Trophy },
-  { name: "Fiction", icon: BookOpen },
-  { name: "Non-fiction", icon: BookOpen },
-  { name: "Others", icon: Laptop },
-];
 
 export default function Home() {
   const { listings, loading } = useListings();
@@ -231,7 +219,7 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                {trendingCategories.map((cat) => {
+                {CATEGORIES.map((cat) => {
                   const Icon = cat.icon;
 
                   return (
@@ -265,9 +253,12 @@ export default function Home() {
             <section
               onClick={() => navigate("/categories/free-books")}
               className="rounded-3xl p-5 sm:p-8 cursor-pointer
-              bg-gradient-to-r from-purple-600 to-indigo-600
               text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]
               hover:scale-[1.01] transition-all"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--accent), var(--primary))",
+              }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-3">

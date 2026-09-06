@@ -48,7 +48,7 @@ export default function Favourites() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:p-5 space-y-6">
+      <div className="space-y-6">
         {/* HEADER */}
         <div className="space-y-1">
           <div className="flex items-center gap-3">

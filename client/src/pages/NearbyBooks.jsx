@@ -1,17 +1,22 @@
-import AppLayout from "../layouts/AppLayout";
 import { useEffect, useState } from "react";
+import AppLayout from "../layouts/AppLayout";
 import { getListings } from "../services/listingService";
 import BookCard from "../components/BookCard";
+import TagFilterRow from "../components/TagFilterRow";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
 import { sortListingsByDistance } from "../utils/listingSort";
+import { CATEGORIES } from "../constants/categories";
+
+const TAG_ITEMS = ["All", ...CATEGORIES.map((c) => c.name)];
 
 export default function NearbyBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTag, setActiveTag] = useState("All");
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -42,11 +47,20 @@ export default function NearbyBooks() {
     );
   }
 
-  const sortedBooks = sortListingsByDistance(books, user?.location);
+  let filteredBooks = books;
+
+  if (activeTag !== "All") {
+    filteredBooks = books.filter((book) => {
+      const parentCategory = book.category?.split("•")[0].trim();
+      return parentCategory === activeTag;
+    });
+  }
+
+  const sortedBooks = sortListingsByDistance(filteredBooks, user?.location);
 
   return (
     <AppLayout>
-      <div className="p-5 space-y-6">
+      <div className="space-y-6">
         {/* HEADER */}
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -64,12 +78,19 @@ export default function NearbyBooks() {
           </div>
         </div>
 
+        {/* CATEGORY TAGS */}
+        <TagFilterRow
+          items={TAG_ITEMS}
+          active={activeTag}
+          onSelect={setActiveTag}
+        />
+
         {/* EMPTY */}
         {sortedBooks.length === 0 ? (
           <EmptyState
             icon={MapPin}
             title="No nearby books found"
-            message="Try updating your location or check back later."
+            message="Try a different category, or check back later."
             actionLabel="Update Location"
             onAction={() => navigate("/edit-profile")}
           />

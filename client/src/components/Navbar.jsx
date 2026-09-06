@@ -1,5 +1,5 @@
 import { NavLink, Link } from "react-router-dom";
-import { Sun, Moon, Menu, X, Search } from "lucide-react";
+import { Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from "./SearchBar";
@@ -9,7 +9,6 @@ import logoDark from "../assets/BookLoop_dark_logo.png";
 
 export default function Navbar({ showSearch = true }) {
   const { dark, toggleTheme } = useTheme();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
@@ -49,7 +48,7 @@ export default function Navbar({ showSearch = true }) {
         <div className="relative flex items-center justify-between gap-3">
           {/* LEFT */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            {/* MOBILE LOGO ONLY - hidden while mobile search is expanded, so it never overlaps */}
+            {/* LOGO - hidden while mobile search is expanded, so it never overlaps */}
             {!mobileSearchOpen && (
               <Link to="/home" className="shrink-0">
                 <img
@@ -60,7 +59,7 @@ export default function Navbar({ showSearch = true }) {
               </Link>
             )}
 
-            {/* DESKTOP NAV */}
+            {/* DESKTOP NAV - bottom nav covers these on mobile/tablet */}
             <div className="hidden lg:flex items-center gap-5">
               <NavLink to="/home" className={navClass}>
                 Home
@@ -97,14 +96,13 @@ export default function Navbar({ showSearch = true }) {
 
           {/* RIGHT */}
           <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
-            <div className="hidden lg:block">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-[var(--surface)] transition"
-              >
-                {dark ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-            </div>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="p-2 rounded-lg hover:bg-[var(--surface)] transition"
+            >
+              {dark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
 
             {/* MOBILE SEARCH */}
             <div ref={mobileSearchRef} className="sm:hidden relative">
@@ -124,74 +122,16 @@ export default function Navbar({ showSearch = true }) {
 
             <ProfileDropdown />
 
-            {/* DESKTOP SELL */}
+            {/* SELL - desktop only; mobile/tablet use the bottom nav's Sell button instead */}
             <Link
               to="/sell"
-              className="hidden sm:inline-block px-3 md:px-4 py-2 rounded-lg text-white font-medium
+              className="hidden lg:inline-block px-3 md:px-4 py-2 rounded-lg text-white font-medium
               bg-[var(--accent)] hover:opacity-90 transition whitespace-nowrap text-sm"
             >
               + Sell
             </Link>
-
-            {/* MOBILE MENU BUTTON */}
-            <button
-              onClick={() => {
-                setMobileSearchOpen(false);
-                setMobileMenuOpen((prev) => !prev);
-              }}
-              className="lg:hidden p-2 rounded-lg hover:bg-[var(--surface)] transition"
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
         </div>
-
-
-        {/* MOBILE MENU */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pt-4 border-t border-[var(--border)] flex flex-col gap-2">
-            <NavLink
-              to="/home"
-              className={navClass}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Home
-            </NavLink>
-
-            <NavLink
-              to="/categories"
-              className={navClass}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Categories
-            </NavLink>
-
-            <NavLink
-              to="/favourites"
-              className={navClass}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Wishlist
-            </NavLink>
-
-            <button
-              onClick={toggleTheme}
-              className="w-full flex items-center gap-2 px-1 py-2 text-left hover:text-[var(--primary)] transition"
-            >
-              {dark ? <Sun size={16} /> : <Moon size={16} />}
-              {dark ? "Light Mode" : "Dark Mode"}
-            </button>
-
-            <Link
-              to="/sell"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-1 px-4 py-2 rounded-lg text-white font-medium
-bg-[var(--accent)] hover:opacity-90 transition text-center"
-            >
-              + Sell Book
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   );

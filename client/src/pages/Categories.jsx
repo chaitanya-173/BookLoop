@@ -1,46 +1,7 @@
 import AppLayout from "../layouts/AppLayout";
-import {
-  GraduationCap,
-  BookOpen,
-  Trophy,
-  Library,
-  Laptop,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const categories = [
-  {
-    name: "School",
-    icon: GraduationCap,
-    desc: "Class 1–12, board prep & school essentials",
-  },
-  {
-    name: "College / University",
-    icon: Library,
-    desc: "Degree, diploma & higher education books",
-  },
-  {
-    name: "Entrance / Competitive",
-    icon: Trophy,
-    desc: "JEE, NEET, UPSC, SSC & exam prep",
-  },
-  {
-    name: "Fiction",
-    icon: BookOpen,
-    desc: "Novels, fantasy, thrillers & literature",
-  },
-  {
-    name: "Non-fiction",
-    icon: BookOpen,
-    desc: "Self-help, business, biographies & more",
-  },
-  {
-    name: "Others",
-    icon: Laptop,
-    desc: "Computer science, design, niche subjects",
-  },
-];
+import { CATEGORIES } from "../constants/categories";
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -62,7 +23,7 @@ export default function Categories() {
 
         {/* CATEGORY GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {categories.map((cat) => {
+          {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
 
             return (

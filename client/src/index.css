@@ -151,3 +151,11 @@
     animation: none !important;
   }
 }
+/* Hides scrollbar for horizontally-scrolling tag rows, while keeping scroll functional */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

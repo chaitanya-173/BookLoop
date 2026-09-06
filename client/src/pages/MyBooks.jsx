@@ -28,7 +28,7 @@ export default function MyBooks() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:p-5">
+      <div>
         <h2 className="text-xl sm:text-2xl font-semibold mb-4">My Books</h2>
 
         {myBooks.length > 0 ? (

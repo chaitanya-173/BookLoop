@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import BottomNav from "../components/BottomNav";
 import ProfileCompletionPrompt from "../components/ProfileCompletionPrompt";
 
 export default function AppLayout({
@@ -12,10 +13,12 @@ export default function AppLayout({
 
       <div className="h-24 sm:h-24 md:h-28" />
 
-      <main className="max-w-7xl mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8 pb-12 sm:pb-10">
+      <main className="max-w-7xl mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8 pb-28 lg:pb-10">
         {showProfilePrompt && <ProfileCompletionPrompt />}
         {children}
       </main>
+
+      <BottomNav />
     </div>
   );
 }
