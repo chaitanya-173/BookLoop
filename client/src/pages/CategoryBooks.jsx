@@ -4,11 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useListings } from "../context/ListingsContext";
 import BookCard from "../components/BookCard";
 import TagFilterRow from "../components/TagFilterRow";
+import SortDropdown from "../components/SortDropdown";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
-import { sortListingsByDistance } from "../utils/listingSort";
+import { sortListings, DEFAULT_SORT } from "../utils/listingSort";
 import { CATEGORIES } from "../constants/categories";
 
 export default function CategoryBooks() {
@@ -18,6 +19,7 @@ export default function CategoryBooks() {
   const navigate = useNavigate();
 
   const [activeTag, setActiveTag] = useState("All");
+  const [sortKey, setSortKey] = useState(DEFAULT_SORT);
 
   // Reset the tag filter whenever the category itself changes
   useEffect(() => {
@@ -76,31 +78,35 @@ export default function CategoryBooks() {
     }
   }
 
-  filteredBooks = sortListingsByDistance(filteredBooks, user?.location);
+  filteredBooks = sortListings(filteredBooks, sortKey, user?.location);
 
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center w-9 h-9 rounded-xl
   border border-[var(--border)] bg-[var(--surface)]
   text-[var(--text-muted)] hover:text-[var(--text)]
   hover:bg-[var(--bg)] transition"
-            >
-              <ArrowLeft size={16} />
-            </button>
+              >
+                <ArrowLeft size={16} />
+              </button>
 
-            <h1 className="text-xl sm:text-2xl font-semibold">
-              {decodeURIComponent(categoryName)}
-            </h1>
+              <h1 className="text-xl sm:text-2xl font-semibold">
+                {decodeURIComponent(categoryName)}
+              </h1>
+            </div>
+
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] ml-12">
+              {filteredBooks.length} books found
+            </p>
           </div>
 
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] ml-12">
-            {filteredBooks.length} books found
-          </p>
+          <SortDropdown value={sortKey} onChange={setSortKey} />
         </div>
 
         {/* SUB-CATEGORY / CATEGORY TAGS */}

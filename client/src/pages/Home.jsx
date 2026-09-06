@@ -6,9 +6,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
-import { sortListingsByDistance } from "../utils/listingSort";
+import { sortListings, DEFAULT_SORT } from "../utils/listingSort";
 import { semanticSearchListings } from "../services/listingService";
 import { CATEGORIES } from "../constants/categories";
+import SortDropdown from "../components/SortDropdown";
 import {
   ArrowRight,
   BookOpen,
@@ -30,6 +31,7 @@ export default function Home() {
   // Once semantic search resolves with matches, we silently upgrade to those (better ranked),
   // with zero visible toggle or loading state - same search box, just smarter results.
   const [smartResults, setSmartResults] = useState(null);
+  const [sortKey, setSortKey] = useState(DEFAULT_SORT);
 
   useEffect(() => {
     setSmartResults(null);
@@ -66,7 +68,7 @@ export default function Home() {
   }
 
   // Search filter
-  const filteredListings = sortListingsByDistance(
+  const filteredListings = sortListings(
     searchQuery
       ? listings.filter((book) =>
           [book.title, book.author, book.category]
@@ -75,6 +77,7 @@ export default function Home() {
             .includes(searchQuery),
         )
       : listings,
+    sortKey,
     user?.location,
   );
 
@@ -111,13 +114,17 @@ export default function Home() {
         {/* SEARCH MODE */}
         {searchQuery ? (
           <section className="space-y-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Search Results</h1>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold">Search Results</h1>
 
-              <p className="text-[var(--text-muted)] mt-1">
-                {(smartResults ?? filteredListings).length} books found for "
-                {rawSearchQuery}"
-              </p>
+                <p className="text-[var(--text-muted)] mt-1">
+                  {(smartResults ?? filteredListings).length} books found for "
+                  {rawSearchQuery}"
+                </p>
+              </div>
+
+              <SortDropdown value={sortKey} onChange={setSortKey} />
             </div>
 
             {(smartResults ?? filteredListings).length > 0 ? (
@@ -178,12 +185,16 @@ export default function Home() {
                   Your Nearby Books
                 </h2>
 
-                <button
-                  onClick={() => navigate("/nearby-books")}
-                  className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all"
-                >
-                  View More <ArrowRight size={18} />
-                </button>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <SortDropdown value={sortKey} onChange={setSortKey} />
+
+                  <button
+                    onClick={() => navigate("/nearby-books")}
+                    className="flex items-center gap-1 text-[var(--accent)] font-medium hover:gap-2 transition-all whitespace-nowrap"
+                  >
+                    View More <ArrowRight size={18} />
+                  </button>
+                </div>
               </div>
 
               {nearbyBooks.length > 0 ? (

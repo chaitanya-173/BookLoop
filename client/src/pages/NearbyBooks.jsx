@@ -3,12 +3,13 @@ import AppLayout from "../layouts/AppLayout";
 import { getListings } from "../services/listingService";
 import BookCard from "../components/BookCard";
 import TagFilterRow from "../components/TagFilterRow";
+import SortDropdown from "../components/SortDropdown";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
-import { sortListingsByDistance } from "../utils/listingSort";
+import { sortListings, DEFAULT_SORT } from "../utils/listingSort";
 import { CATEGORIES } from "../constants/categories";
 
 const TAG_ITEMS = ["All", ...CATEGORIES.map((c) => c.name)];
@@ -17,6 +18,7 @@ export default function NearbyBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTag, setActiveTag] = useState("All");
+  const [sortKey, setSortKey] = useState(DEFAULT_SORT);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -56,13 +58,13 @@ export default function NearbyBooks() {
     });
   }
 
-  const sortedBooks = sortListingsByDistance(filteredBooks, user?.location);
+  const sortedBooks = sortListings(filteredBooks, sortKey, user?.location);
 
   return (
     <AppLayout>
       <div className="space-y-6">
         {/* HEADER */}
-        <div className="space-y-1">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -76,6 +78,8 @@ export default function NearbyBooks() {
 
             <h1 className="text-xl sm:text-2xl font-semibold">Nearby Books</h1>
           </div>
+
+          <SortDropdown value={sortKey} onChange={setSortKey} />
         </div>
 
         {/* CATEGORY TAGS */}

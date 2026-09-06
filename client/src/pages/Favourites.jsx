@@ -2,16 +2,18 @@ import AppLayout from "../layouts/AppLayout";
 import { useEffect, useState } from "react";
 import { getWishlist } from "../services/listingService";
 import BookCard from "../components/BookCard";
+import SortDropdown from "../components/SortDropdown";
 import { ArrowLeft, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { BookGridSkeleton } from "../components/BookCardSkeleton";
 import EmptyState from "../components/EmptyState";
-import { sortListingsByDistance } from "../utils/listingSort";
+import { sortListings, DEFAULT_SORT } from "../utils/listingSort";
 
 export default function Favourites() {
   const [wishlistBooks, setWishlistBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortKey, setSortKey] = useState(DEFAULT_SORT);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -41,33 +43,34 @@ export default function Favourites() {
     );
   }
 
-  const sortedWishlistBooks = sortListingsByDistance(
-    wishlistBooks,
-    user?.location,
-  );
+  const sortedWishlistBooks = sortListings(wishlistBooks, sortKey, user?.location);
 
   return (
     <AppLayout>
       <div className="space-y-6">
         {/* HEADER */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center w-9 h-9 rounded-xl
   border border-[var(--border)] bg-[var(--surface)]
   text-[var(--text-muted)] hover:text-[var(--text)]
   hover:bg-[var(--bg)] transition"
-            >
-              <ArrowLeft size={16} />
-            </button>
+              >
+                <ArrowLeft size={16} />
+              </button>
 
-            <h1 className="text-xl sm:text-2xl font-semibold">My Wishlist</h1>
+              <h1 className="text-xl sm:text-2xl font-semibold">My Wishlist</h1>
+            </div>
+
+            <p className="text-[var(--text-muted)] ml-12 text-xs sm:text-sm">
+              {sortedWishlistBooks.length} saved books
+            </p>
           </div>
 
-          <p className="text-[var(--text-muted)] ml-12 text-xs sm:text-sm">
-            {sortedWishlistBooks.length} saved books
-          </p>
+          <SortDropdown value={sortKey} onChange={setSortKey} />
         </div>
 
         {/* EMPTY STATE */}
