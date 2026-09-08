@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import listingRoutes from "./routes/listingRoutes.js";
+import bookLookupRoutes from "./routes/bookLookupRoutes.js";
 
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -49,6 +50,7 @@ app.get("/", (req, res) => {
 // Routes 
 app.use("/api/auth", authRoutes);
 app.use("/api/listings", listingRoutes);
+app.use("/api/books", bookLookupRoutes);
 
 app.use(errorHandler);
 

@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
 import CategoryDropdown from "../components/CategoryDropdown";
 import ConditionDropdown from "../components/ConditionDropdown";
+import BookLookupModal from "../components/BookLookupModal";
+import { ScanLine } from "lucide-react";
 import {
   createListing,
   getListingById,
@@ -16,6 +18,7 @@ export default function Sell() {
   const isEditMode = Boolean(id);
   const [type, setType] = useState("sell");
   const [images, setImages] = useState([]);
+  const [showLookup, setShowLookup] = useState(false);
   const navigate = useNavigate();
   const { refreshListings } = useListings();
 
@@ -75,6 +78,18 @@ export default function Sell() {
     });
   };
 
+  const handleLookupConfirm = (data) => {
+    setBookData((prev) => ({
+      ...prev,
+      title: data.title || prev.title,
+      author: data.author || prev.author,
+      description: data.description || prev.description,
+    }));
+
+    setShowLookup(false);
+    toast.success("Details filled in - add your own photos & category below");
+  };
+
   // SUBMIT LOGIC
   const handleSubmit = async () => {
     const { title, category, price, condition, author, description } = bookData;
@@ -130,6 +145,18 @@ export default function Sell() {
           <h2 className="text-xl sm:text-2xl font-semibold mb-4">
             {isEditMode ? "Edit your listing" : "Sell your book"}
           </h2>
+
+          {!isEditMode && (
+            <button
+              onClick={() => setShowLookup(true)}
+              className="w-full mb-4 flex items-center justify-center gap-2 py-3 rounded-xl
+              border border-dashed border-[var(--accent)] text-[var(--accent)]
+              text-sm font-medium hover:bg-[var(--accent)]/5 transition"
+            >
+              <ScanLine size={16} />
+              Scan barcode or enter ISBN to auto-fill details
+            </button>
+          )}
 
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 space-y-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)]">
             {/* IMAGE UPLOAD (UNCHANGED) */}
@@ -317,6 +344,13 @@ export default function Sell() {
           </div>
         </div>
       </div>
+
+      {showLookup && (
+        <BookLookupModal
+          onClose={() => setShowLookup(false)}
+          onConfirm={handleLookupConfirm}
+        />
+      )}
     </AppLayout>
   );
 }
